@@ -50,6 +50,19 @@ def get_recipe_ingredients_by_recipe_id(recipe_id):
 
     return jsonify(ingredients)
 
+@recipes_blueprint.route('/<int:recipe_id>/comments', methods=['GET'])
+def get_comments_by_recipe_id(recipe_id):
+    page = int(request.args.get('page', DEFAULT_PAGE))
+    page_size = int(request.args.get('page_size', DEFAULT_PAGE_SIZE))
+
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc('get_comments_by_recipe_id', [recipe_id, page, page_size])
+        comments = cursor.fetchall()
+    db.close()
+
+    return jsonify(comments)
+
 @recipes_blueprint.route('/<int:recipe_id>/translations', methods=['GET'])
 def get_recipe_translations_by_recipe_id(recipe_id):
     db = get_db_connection()

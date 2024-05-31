@@ -22,3 +22,13 @@ def get_recipes_by_author(person_id):
     db.close()
 
     return jsonify(recipes)
+
+@persons_blueprint.route('/<int:person_id>/comments', methods=['GET'])
+def get_comments_by_person(person_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc('get_comments_by_person', [person_id])
+        comments = cursor.fetchall()
+    db.close()
+
+    return jsonify(comments)

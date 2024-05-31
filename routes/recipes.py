@@ -59,3 +59,13 @@ def get_recipe_translations_by_recipe_id(recipe_id):
     db.close()
 
     return jsonify(translations)
+
+@recipes_blueprint.route('/<int:recipe_id>/ratings', methods=['GET'])
+def get_ratings_by_recipe_id(recipe_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc('get_ratings_by_recipe_id', [recipe_id])
+        ratings = cursor.fetchall()
+    db.close()
+
+    return jsonify(ratings)

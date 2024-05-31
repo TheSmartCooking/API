@@ -32,3 +32,13 @@ def get_comments_by_person(person_id):
     db.close()
 
     return jsonify(comments)
+
+@persons_blueprint.route('/<int:person_id>/favorites', methods=['GET'])
+def get_favorites_by_person_id(person_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc('get_favorites_by_person_id', [person_id])
+        favorites = cursor.fetchall()
+    db.close()
+
+    return jsonify(favorites)

@@ -12,3 +12,13 @@ def get_person_by_id(person_id):
     db.close()
 
     return jsonify(person)
+
+@persons_blueprint.route('/<int:person_id>/recipes', methods=['GET'])
+def get_recipes_by_author(person_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc('get_recipes_by_author', [person_id])
+        recipes = cursor.fetchall()
+    db.close()
+
+    return jsonify(recipes)

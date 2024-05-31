@@ -4,6 +4,7 @@ from config import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
 
 recipes_blueprint = Blueprint('recipes', __name__)
 
+# TODO: Handle `get_recipes_by_tags` function
 @recipes_blueprint.route('/', methods=['GET'])
 def get_paginated_recipes():
     locale_code = request.args.get('locale_code')
@@ -38,3 +39,13 @@ def get_tags_by_recipe_id(recipe_id):
     db.close()
 
     return jsonify(tags)
+
+@recipes_blueprint.route('/<int:recipe_id>/ingredients', methods=['GET'])
+def get_recipe_ingredients_by_recipe_id(recipe_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc('get_recipe_ingredients_by_recipe_id', [recipe_id])
+        ingredients = cursor.fetchall()
+    db.close()
+
+    return jsonify(ingredients)

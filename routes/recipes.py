@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import get_db_connection
+from config import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
 
 recipes_blueprint = Blueprint('recipes', __name__)
 
@@ -7,8 +8,8 @@ recipes_blueprint = Blueprint('recipes', __name__)
 def get_paginated_recipes():
     locale_code = request.args.get('locale_code')
     status_name = request.args.get('status_name')
-    page = int(request.args.get('page', 1))
-    page_size = int(request.args.get('page_size', 10))
+    page = int(request.args.get('page', DEFAULT_PAGE))
+    page_size = int(request.args.get('page_size', DEFAULT_PAGE_SIZE))
 
     db = get_db_connection()
     with db.cursor() as cursor:

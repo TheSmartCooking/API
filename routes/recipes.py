@@ -28,3 +28,13 @@ def get_recipe_by_id(recipe_id):
     db.close()
 
     return jsonify(recipe)
+
+@recipes_blueprint.route('/<int:recipe_id>/tags', methods=['GET'])
+def get_tags_by_recipe_id(recipe_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc('get_tags_by_recipe_id', [recipe_id])
+        tags = cursor.fetchall()
+    db.close()
+
+    return jsonify(tags)

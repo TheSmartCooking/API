@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import get_db_connection
-from config import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
+from settings import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
 
 recipes_blueprint = Blueprint('recipes', __name__)
 

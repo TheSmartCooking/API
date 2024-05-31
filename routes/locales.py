@@ -8,7 +8,7 @@ def get_all_locales():
     db = get_db_connection()
     with db.cursor() as cursor:
         cursor.callproc('get_all_locales')
-        person = cursor.fetchone()
+        locales = cursor.fetchall()
     db.close()
 
-    return jsonify(person)
+    return jsonify(locales)

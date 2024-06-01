@@ -6,15 +6,13 @@ from error_handlers import register_error_handlers
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Register error handlers
-register_error_handlers(app)
-
 @app.route('/')
 def home():
     return "Hello there!"
 
-# Register all routes
+# Register routes and error handlers
 register_routes(app)
+register_error_handlers(app)
 
 if __name__ == '__main__':
     from waitress import serve

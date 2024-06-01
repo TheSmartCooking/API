@@ -1,19 +1,22 @@
 import argon2
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def hash_password_with_salt_and_pepper(password):
-    # Generate a random salt (will be set in a configuration file)
+    # Generate a random salt
     salt = os.urandom(16)
 
-    # Defining the secret pepper (will be in a configuration file)
-    pepper = b'my_secret_pepper'
+    # Loading the secret pepper and encoding it to bytes
+    pepper = os.getenv('PEPPER').encode('utf-8')
 
     # Combine the password and pepper
     password_with_pepper = pepper + password.encode('utf-8')
 
     # Hash the password with salt and pepper using Argon2id
-    ph = argon2.PasswordHasher(time_cost=2, memory_cost=102400, parallelism=8)
-    hash = ph.hash(password_with_pepper, salt)
+    ph = argon2.PasswordHasher()
+    hash = ph.hash(password_with_pepper, salt=salt)
 
     return hash, salt
 

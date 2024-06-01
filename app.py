@@ -18,4 +18,4 @@ register_routes(app)
 
 if __name__ == '__main__':
     from waitress import serve
-    serve(app, host='localhost', port=8080)
+    serve(app, host='localhost', port=29565)

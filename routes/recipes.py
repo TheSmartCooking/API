@@ -4,17 +4,21 @@ from config import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
 
 recipes_blueprint = Blueprint('recipes', __name__)
 
-# TODO: Handle `get_recipes_by_tags` function
 @recipes_blueprint.route('/', methods=['GET'])
 def get_paginated_recipes():
     locale_code = request.args.get('locale_code')
     status_name = request.args.get('status_name')
+    tags = request.args.get('tags')
     page = int(request.args.get('page', DEFAULT_PAGE))
     page_size = int(request.args.get('page_size', DEFAULT_PAGE_SIZE))
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.callproc('get_paginated_recipes', [locale_code, status_name, page, page_size])
+        if tags:
+            cursor.callproc('get_recipes_by_tags', [tags, page, page_size])
+        else:
+            cursor.callproc('get_paginated_recipes', [locale_code, status_name, page, page_size])
+        
         recipes = cursor.fetchall()
     db.close()
 

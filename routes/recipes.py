@@ -18,7 +18,7 @@ def get_paginated_recipes():
             cursor.callproc('get_recipes_by_tags', [tags, page, page_size])
         else:
             cursor.callproc('get_paginated_recipes', [locale_code, status_name, page, page_size])
-        
+
         recipes = cursor.fetchall()
     db.close()
 

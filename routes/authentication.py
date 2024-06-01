@@ -24,12 +24,12 @@ def register():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
-    
+
     if not username or not email or not password:
         return jsonify({"message": "Username, email, and password are required"}), 400
-    
+
     hashed_password, salt = hash_password_with_salt_and_pepper(password, os.urandom(16))
-    
+
     db = get_db_connection()
     with db.cursor() as cursor:
         try:
@@ -40,7 +40,7 @@ def register():
                 return jsonify({"message": "Email already in use"}), 400
             else:
                 return jsonify({"message": "An error occurred during registration"}), 500
-    
+
     return jsonify({"message": "User created successfully"}), 201
 
 
@@ -49,25 +49,25 @@ def login():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    
+
     if not username or not password:
         return jsonify({"message": "Username and password are required"}), 400
-    
+
     db = get_db_connection()
     with db.cursor() as cursor:
         cursor.execute('SELECT password, salt FROM users WHERE username = %s', (username,))
         user = cursor.fetchone()
-        
+
         if user:
             entered_password = hash_password_with_salt_and_pepper(user['password'], user['salt'])
-            
+
             try:
                 ph.verify(user['password'], entered_password)
                 access_token = create_access_token(identity={'username': username})
                 return jsonify(access_token=access_token), 200
             except VerifyMismatchError:
                 pass
-    
+
     return jsonify({"message": "Invalid credentials"}), 401
 
 @authentications_blueprint.route('/protected', methods=['GET'])

@@ -5,6 +5,7 @@ from pymysql import MySQLError
 from db import get_db_connection
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+from re import match
 import os
 
 load_dotenv()
@@ -27,6 +28,9 @@ def register():
 
     if not username or not email or not password:
         return jsonify({"message": "Username, email, and password are required"}), 400
+
+    if len(password) < 8:
+        return jsonify({"message": "Password is too short"}), 400
 
     hashed_password, salt = hash_password_with_salt_and_pepper(password, os.urandom(16))
 

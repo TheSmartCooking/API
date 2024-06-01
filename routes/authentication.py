@@ -13,11 +13,11 @@ load_dotenv()
 authentications_blueprint = Blueprint('authentications', __name__)
 ph = PasswordHasher()
 
-def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> tuple:
+def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> str:
     pepper = os.getenv('PEPPER').encode('utf-8')
-    password_with_pepper = pepper + password.encode('utf-8')
-    hash = ph.hash(password_with_pepper, salt=salt)
-    return hash, salt
+    password_with_pepper = pepper + salt + password.encode('utf-8')
+    hash = ph.hash(password_with_pepper)
+    return hash
 
 def validate_password(password):
     return bool(match(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$', password))
@@ -35,7 +35,8 @@ def register():
     if not validate_password(password):
         return jsonify({"message": "Password does not meet security requirements"}), 400
 
-    hashed_password, salt = hash_password_with_salt_and_pepper(password, os.urandom(16))
+    salt = os.urandom(16)
+    hashed_password = hash_password_with_salt_and_pepper(password, salt)
 
     db = get_db_connection()
     with db.cursor() as cursor:
@@ -50,7 +51,6 @@ def register():
 
     return jsonify({"message": "User created successfully"}), 201
 
-
 @authentications_blueprint.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -58,7 +58,7 @@ def login():
     password = data.get('password')
 
     if not email or not password:
-        return jsonify({"message": "Username and password are required"}), 400
+        return jsonify({"message": "Email and password are required"}), 400
 
     db = get_db_connection()
     with db.cursor() as cursor:
@@ -68,10 +68,11 @@ def login():
         if user:
             stored_password = user['password']
             salt = user['salt']
-            entered_password_hash, _ = hash_password_with_salt_and_pepper(password, salt)
+            pepper = os.getenv('PEPPER').encode('utf-8')
+            password_with_pepper = pepper + salt + password.encode('utf-8')
 
             try:
-                ph.verify(stored_password, entered_password_hash)
+                ph.verify(stored_password, password_with_pepper)
                 access_token = create_access_token(identity={'username': email})
                 return jsonify(access_token=access_token), 200
             except VerifyMismatchError:

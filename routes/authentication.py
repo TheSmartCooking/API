@@ -62,7 +62,7 @@ def login():
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.execute('SELECT password, salt FROM person WHERE username = %s', (username,))
+        cursor.execute('SELECT password, salt FROM person WHERE name = %s', (username,))
         user = cursor.fetchone()
 
         if user:

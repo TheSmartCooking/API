@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from dotenv import load_dotenv
+from pymysql import MySQLError
 from db import get_db_connection
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
@@ -21,25 +22,27 @@ def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> tuple:
 def register():
     data = request.get_json()
     username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
     
-    if not username or not password:
-        return jsonify({"message": "Username and password are required"}), 400
+    if not username or not email or not password:
+        return jsonify({"message": "Username, email, and password are required"}), 400
     
-    hashed_password, salt = hash_password_with_salt_and_pepper(password, os.urandom(16))
+    hashed_password, salt = hash_password_with_salt_and_pepper(password)
     
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
-        existing_user = cursor.fetchone()
-        
-        if existing_user:
-            return jsonify({"message": "User already exists"}), 400
-        
-        cursor.execute('INSERT INTO users (username, password, salt) VALUES (%s, %s, %s)', (username, hashed_password, salt))
-        db.commit()
+        try:
+            cursor.callproc('create_person', (username, email, hashed_password, salt))
+            db.commit()
+        except MySQLError as e:
+            if e.args[0] == 1062:  # Error number for 'Duplicate entry'
+                return jsonify({"message": "Email already in use"}), 400
+            else:
+                return jsonify({"message": "An error occurred during registration"}), 500
     
     return jsonify({"message": "User created successfully"}), 201
+
 
 @authentications_blueprint.route('/login', methods=['POST'])
 def login():

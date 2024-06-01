@@ -28,7 +28,7 @@ def register():
     if not username or not email or not password:
         return jsonify({"message": "Username, email, and password are required"}), 400
     
-    hashed_password, salt = hash_password_with_salt_and_pepper(password)
+    hashed_password, salt = hash_password_with_salt_and_pepper(password, os.urandom(16))
     
     db = get_db_connection()
     with db.cursor() as cursor:

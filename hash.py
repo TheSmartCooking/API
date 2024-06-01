@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def hash_password_with_salt_and_pepper(password):
+def hash_password_with_salt_and_pepper(password: str) -> tuple:
     # Generate a random salt
     salt = os.urandom(16)
 

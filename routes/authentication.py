@@ -30,10 +30,10 @@ def register():
     password = data.get('password')
 
     if not username or not email or not password:
-        return jsonify({"message": "Username, email, and password are required"}), 400
+        return jsonify(message="Username, email, and password are required"), 400
 
     if not validate_password(password):
-        return jsonify({"message": "Password does not meet security requirements"}), 400
+        return jsonify(message="Password does not meet security requirements"), 400
 
     salt = os.urandom(16)
     hashed_password = hash_password_with_salt_and_pepper(password, salt)
@@ -45,11 +45,11 @@ def register():
             db.commit()
         except MySQLError as e:
             if e.args[0] == 1644:
-                return jsonify({"message": "Email already in use"}), 400
+                return jsonify(message="Email already in use"), 400
             else:
-                return jsonify({"message": "An error occurred during registration"}), 500
+                return jsonify(message="An error occurred during registration"), 500
 
-    return jsonify({"message": "User created successfully"}), 201
+    return jsonify(message="User created successfully"), 201
 
 @authentications_blueprint.route('/login', methods=['POST'])
 def login():
@@ -58,7 +58,7 @@ def login():
     password = data.get('password')
 
     if not email or not password:
-        return jsonify({"message": "Email and password are required"}), 400
+        return jsonify(message="Email and password are required"), 400
 
     db = get_db_connection()
     with db.cursor() as cursor:
@@ -78,7 +78,7 @@ def login():
             except VerifyMismatchError:
                 pass
 
-    return jsonify({"message": "Invalid credentials"}), 401
+    return jsonify(message="Invalid credentials"), 401
 
 @authentications_blueprint.route('/protected', methods=['GET'])
 @jwt_required()

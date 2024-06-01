@@ -3,32 +3,32 @@ from pymysql import DatabaseError
 from werkzeug.exceptions import NotFound, BadRequest, Unauthorized, Forbidden, MethodNotAllowed
 
 def handle_database_error(error):
-    current_app.logger.error('Database connection error: %s', error)
-    return jsonify({'error': 'Database connection error'}), 500
+    current_app.logger.error(f"Database connection error: {error}")
+    return jsonify(error="Database connection error"), 500
 
 def handle_not_found_error(error):
-    current_app.logger.error('Not found error: %s', error)
-    return jsonify({'error': 'Resource not found'}), 404
+    current_app.logger.error(f"Not found error: {error}")
+    return jsonify(error="Resource not found"), 404
 
 def handle_bad_request_error(error):
-    current_app.logger.error('Bad request error: %s', error)
-    return jsonify({'error': 'Bad request'}), 400
+    current_app.logger.error(f"Bad request error: {error}")
+    return jsonify(error="Bad request"), 400
 
 def handle_unauthorized_error(error):
-    current_app.logger.error('Unauthorized error: %s', error)
-    return jsonify({'error': 'Unauthorized'}), 401
+    current_app.logger.error(f"Unauthorized error: {error}")
+    return jsonify(error="Unauthorized"), 401
 
 def handle_forbidden_error(error):
-    current_app.logger.error('Forbidden error: %s', error)
-    return jsonify({'error': 'Forbidden'}), 403
+    current_app.logger.error(f"Forbidden error: {error}")
+    return jsonify(error="Forbidden"), 403
 
 def handle_method_not_allowed_error(error):
-    current_app.logger.error('Method not allowed error: %s', error)
-    return jsonify({'error': 'Method not allowed'}), 405
+    current_app.logger.error(f"Method not allowed error: {error}")
+    return jsonify(error="Method not allowed"), 405
 
 def handle_server_error(error):
-    current_app.logger.error('Server error: %s', error)
-    return jsonify({'error': 'Internal server error'}), 500
+    current_app.logger.error(f"Server error: {error}")
+    return jsonify(error="Internal server error"), 500
 
 def register_error_handlers(app):
     app.register_error_handler(DatabaseError, handle_database_error)

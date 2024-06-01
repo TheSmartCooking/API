@@ -36,7 +36,7 @@ def register():
             cursor.callproc('create_person', (username, email, hashed_password, salt))
             db.commit()
         except MySQLError as e:
-            if e.args[0] == 1062:  # Error number for 'Duplicate entry'
+            if e.args[0] == 1644:
                 return jsonify({"message": "Email already in use"}), 400
             else:
                 return jsonify({"message": "An error occurred during registration"}), 500

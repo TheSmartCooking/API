@@ -54,23 +54,23 @@ def register():
 @authentications_blueprint.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
 
-    if not username or not password:
+    if not email or not password:
         return jsonify({"message": "Username and password are required"}), 400
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.execute('SELECT password, salt FROM person WHERE name = %s', (username,))
+        cursor.execute('SELECT password, salt FROM person WHERE email = %s', (email,))
         user = cursor.fetchone()
 
         if user:
-            entered_password = hash_password_with_salt_and_pepper(user['password'], user['salt'])
+            entered_password = hash_password_with_salt_and_pepper(password, user['salt'])
 
             try:
                 ph.verify(user['password'], entered_password)
-                access_token = create_access_token(identity={'username': username})
+                access_token = create_access_token(identity={'username': email})
                 return jsonify(access_token=access_token), 200
             except VerifyMismatchError:
                 pass

@@ -16,7 +16,7 @@ ph = PasswordHasher()
 def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> tuple:
     pepper = os.getenv('PEPPER').encode('utf-8')
     password_with_pepper = pepper + password.encode('utf-8')
-    hash = ph.hash(password_with_pepper, salt)
+    hash = ph.hash(password_with_pepper, salt=salt)
     return hash, salt
 
 def validate_password(password):

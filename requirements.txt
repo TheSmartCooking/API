@@ -1,5 +1,6 @@
 argon2-cffi>=23.1.0
 Flask>=3.0.3
+Flask-JWT-Extended>=2.8.0
 PyMySQL>=1.1.1
 waitress>=3.0.0
 python-dotenv>=1.0.1

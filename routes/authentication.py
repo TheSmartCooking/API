@@ -5,7 +5,12 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_required,
+)
 from pymysql import MySQLError
 
 from db import get_db_connection
@@ -84,7 +89,11 @@ def login():
             try:
                 ph.verify(stored_password, password_with_pepper)
                 access_token = create_access_token(identity={"id": user["person_id"]})
-                return jsonify(access_token=access_token), 200
+                refresh_token = create_refresh_token(identity={"id": user["person_id"]})
+                return (
+                    jsonify(access_token=access_token, refresh_token=refresh_token),
+                    200,
+                )
             except VerifyMismatchError:
                 pass
 

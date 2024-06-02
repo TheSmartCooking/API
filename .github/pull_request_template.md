@@ -1,32 +1,29 @@
-# Description de la Pull Request
+# Pull Request Description
 
-## Description brève des modifications
+## Brief Description of Changes
 
-Expliquez brièvement le but général des modifications apportées par cette pull request.
+Briefly explain the overall purpose of the changes made by this pull request.
 
-## Détail des modifications
+## Detailed Changes
 
-Veuillez expliquer en détail les changements effectués par cette pull request.
-Présentez de manière concise ce que fait chaque modification.
+Please explain in detail the changes made by this pull request. Concisely present what each modification does.
 
-## Objectif des modifications/Problème résolu (le cas échéant)
+## Objective of Changes/Issue Resolved (if applicable)
 
-Décrivez précisément l'objectif de cette pull request.
-Expliquez pourquoi ces modifications sont nécessaires et comment elles améliorent ou résolvent des problèmes spécifiques.
-Utilisez des balises comme "Fixes #numéro-du-ticket" ou "Résout le problème de [description]" si applicable.
+Precisely describe the objective of this pull request. Explain why these changes are necessary and how they enhance or resolve specific issues. Use tags like "Fixes #issue-number" or "Resolves the problem of [description]" if applicable.
 
-## Captures d'écran (le cas échéant)
+## Screenshots (if applicable)
 
-Si pertinent, incluez des captures d'écran ou des gifs animés pour illustrer visuellement les modifications apportées.
+If relevant, include screenshots or animated gifs to visually illustrate the changes made.
 
-## Étapes de vérification
+## Verification Steps
 
-Fournissez des étapes détaillées que le relecteur peut suivre pour vérifier vos modifications :
+Provide detailed steps that the reviewer can follow to verify your changes:
 
-1. Étape 1...
-2. Étape 2...
+1. Step 1...
+2. Step 2...
 3. etc.
 
-## Notes pour le relecteur
+## Notes for Reviewer
 
-Incluez ici des informations supplémentaires pertinentes ou des points spécifiques sur lesquels le relecteur devrait se concentrer lors de l'examen de cette demande de pull request.
+Include here any relevant additional information or specific points the reviewer should focus on when reviewing this pull request.

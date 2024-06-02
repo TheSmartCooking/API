@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 
 from config import Config
@@ -28,7 +28,7 @@ jwt = JWTManager(app)
 
 @app.route("/")
 def home():
-    return "Hello there!"
+    return jsonify(message="Hello there!")
 
 
 # Register routes and error handlers

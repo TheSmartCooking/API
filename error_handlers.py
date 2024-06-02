@@ -1,5 +1,6 @@
 from flask import current_app, jsonify
 from flask_jwt_extended import JWTManager
+from flask_limiter import RateLimitExceeded
 from pymysql import DatabaseError
 from werkzeug.exceptions import (
     BadRequest,
@@ -46,8 +47,13 @@ def handle_server_error(error):
 
 
 def expired_token_callback(jwt_header, jwt_payload):
-    current_app.logger.error("Token has expired")
+    current_app.logger.error(f"Token has expired: {jwt_header} | {jwt_payload}")
     return jsonify(message="Token has expired"), 401
+
+
+def handle_rate_limit_exceeded_error(error):
+    current_app.logger.error(f"Rate limit exceeded: {error}")
+    return jsonify(error="Rate limit exceeded"), 429
 
 
 def register_error_handlers(app):
@@ -62,3 +68,5 @@ def register_error_handlers(app):
     # Initialize and configure JWTManager
     jwt = JWTManager(app)
     jwt.expired_token_loader(expired_token_callback)
+
+    app.register_error_handler(RateLimitExceeded, handle_rate_limit_exceeded_error)

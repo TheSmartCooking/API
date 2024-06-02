@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify
-from db import get_db_connection
+from flask import Blueprint, jsonify, request
+
 from config import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
+from db import get_db_connection
 
 recipes_blueprint = Blueprint("recipes", __name__)
+
 
 @recipes_blueprint.route("/", methods=["GET"])
 def get_paginated_recipes():
@@ -17,12 +19,15 @@ def get_paginated_recipes():
         if tags:
             cursor.callproc("get_recipes_by_tags", [tags, page, page_size])
         else:
-            cursor.callproc("get_paginated_recipes", [locale_code, status_name, page, page_size])
+            cursor.callproc(
+                "get_paginated_recipes", [locale_code, status_name, page, page_size]
+            )
 
         recipes = cursor.fetchall()
     db.close()
 
     return jsonify(recipes)
+
 
 @recipes_blueprint.route("/<int:recipe_id>", methods=["GET"])
 def get_recipe_by_id(recipe_id):
@@ -34,6 +39,7 @@ def get_recipe_by_id(recipe_id):
 
     return jsonify(recipe)
 
+
 @recipes_blueprint.route("/<int:recipe_id>/tags", methods=["GET"])
 def get_tags_by_recipe_id(recipe_id):
     db = get_db_connection()
@@ -44,6 +50,7 @@ def get_tags_by_recipe_id(recipe_id):
 
     return jsonify(tags)
 
+
 @recipes_blueprint.route("/<int:recipe_id>/ingredients", methods=["GET"])
 def get_recipe_ingredients_by_recipe_id(recipe_id):
     db = get_db_connection()
@@ -53,6 +60,7 @@ def get_recipe_ingredients_by_recipe_id(recipe_id):
     db.close()
 
     return jsonify(ingredients)
+
 
 @recipes_blueprint.route("/<int:recipe_id>/comments", methods=["GET"])
 def get_comments_by_recipe_id(recipe_id):
@@ -67,6 +75,7 @@ def get_comments_by_recipe_id(recipe_id):
 
     return jsonify(comments)
 
+
 @recipes_blueprint.route("/<int:recipe_id>/translations", methods=["GET"])
 def get_recipe_translations_by_recipe_id(recipe_id):
     db = get_db_connection()
@@ -76,6 +85,7 @@ def get_recipe_translations_by_recipe_id(recipe_id):
     db.close()
 
     return jsonify(translations)
+
 
 @recipes_blueprint.route("/<int:recipe_id>/ratings", methods=["GET"])
 def get_ratings_by_recipe_id(recipe_id):

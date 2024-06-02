@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify
+
 from db import get_db_connection
 
 statuses_blueprint = Blueprint("statuses", __name__)
+
 
 @statuses_blueprint.route("/", methods=["GET"])
 def get_all_statuses():

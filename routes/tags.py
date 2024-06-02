@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify
-from db import get_db_connection
+from flask import Blueprint, jsonify, request
+
 from config import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
+from db import get_db_connection
 
 tags_blueprint = Blueprint("tags", __name__)
+
 
 @tags_blueprint.route("/", methods=["GET"])
 def get_paginated_tags():

@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify
+
 from db import get_db_connection
 
 persons_blueprint = Blueprint("persons", __name__)
+
 
 @persons_blueprint.route("/<int:person_id>", methods=["GET"])
 def get_person_by_id(person_id):
@@ -13,6 +15,7 @@ def get_person_by_id(person_id):
 
     return jsonify(person)
 
+
 @persons_blueprint.route("/<int:person_id>/recipes", methods=["GET"])
 def get_recipes_by_author(person_id):
     db = get_db_connection()
@@ -23,6 +26,7 @@ def get_recipes_by_author(person_id):
 
     return jsonify(recipes)
 
+
 @persons_blueprint.route("/<int:person_id>/comments", methods=["GET"])
 def get_comments_by_person(person_id):
     db = get_db_connection()
@@ -32,6 +36,7 @@ def get_comments_by_person(person_id):
     db.close()
 
     return jsonify(comments)
+
 
 @persons_blueprint.route("/<int:person_id>/favorites", methods=["GET"])
 def get_favorites_by_person_id(person_id):

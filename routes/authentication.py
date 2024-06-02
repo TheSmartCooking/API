@@ -1,17 +1,20 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from dotenv import load_dotenv
-from pymysql import MySQLError
-from db import get_db_connection
+import os
+from re import match
+
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from re import match
-import os
+from dotenv import load_dotenv
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from pymysql import MySQLError
+
+from db import get_db_connection
 
 load_dotenv()
 
 authentications_blueprint = Blueprint("authentications", __name__)
 ph = PasswordHasher()
+
 
 def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> str:
     pepper = os.getenv("PEPPER").encode("utf-8")
@@ -19,8 +22,12 @@ def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> str:
     hash = ph.hash(password_with_pepper)
     return hash
 
+
 def validate_password(password):
-    return bool(match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$", password))
+    return bool(
+        match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$", password)
+    )
+
 
 @authentications_blueprint.route("/register", methods=["POST"])
 def register():
@@ -51,6 +58,7 @@ def register():
 
     return jsonify(message="User created successfully"), 201
 
+
 @authentications_blueprint.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -79,6 +87,7 @@ def login():
                 pass
 
     return jsonify(message="Invalid credentials"), 401
+
 
 @authentications_blueprint.route("/protected", methods=["GET"])
 @jwt_required()

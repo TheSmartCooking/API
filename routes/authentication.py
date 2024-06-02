@@ -71,7 +71,7 @@ def login():
     db = get_db_connection()
     with db.cursor() as cursor:
         cursor.execute(
-            "SELECT name, password, salt FROM person WHERE email = %s", (email,)
+            "SELECT person_id, password, salt FROM person WHERE email = %s", (email,)
         )
         user = cursor.fetchone()
 
@@ -83,9 +83,7 @@ def login():
 
             try:
                 ph.verify(stored_password, password_with_pepper)
-                access_token = create_access_token(
-                    identity={"email": email, "username": user["name"]}
-                )
+                access_token = create_access_token(identity={"id": user["person_id"]})
                 return jsonify(access_token=access_token), 200
             except VerifyMismatchError:
                 pass
@@ -97,4 +95,5 @@ def login():
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    person_id = current_user["id"]
+    return jsonify(logged_in_as=person_id), 200

@@ -1,4 +1,3 @@
-import jwt
 from flask import current_app, jsonify
 from flask_jwt_extended import JWTManager
 from pymysql import DatabaseError

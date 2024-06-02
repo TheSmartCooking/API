@@ -9,7 +9,6 @@ from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     get_jwt_identity,
-    jwt_,
     jwt_required,
 )
 from pymysql import MySQLError

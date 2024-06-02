@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify
-from flask_jwt_extended import JWTManager
 
 from config import Config
 from error_handlers import register_error_handlers
@@ -21,9 +20,6 @@ app.config.from_object(Config)
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
-
-# Initialize JWTManager with the Flask app
-jwt = JWTManager(app)
 
 
 @app.route("/")

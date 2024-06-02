@@ -1,4 +1,6 @@
+import jwt
 from flask import current_app, jsonify
+from flask_jwt_extended import JWTManager
 from pymysql import DatabaseError
 from werkzeug.exceptions import (
     BadRequest,
@@ -44,6 +46,11 @@ def handle_server_error(error):
     return jsonify(error="Internal server error"), 500
 
 
+def expired_token_callback(jwt_header, jwt_payload):
+    current_app.logger.error("Token has expired")
+    return jsonify(message="Token has expired"), 401
+
+
 def register_error_handlers(app):
     app.register_error_handler(DatabaseError, handle_database_error)
     app.register_error_handler(NotFound, handle_not_found_error)
@@ -52,3 +59,7 @@ def register_error_handlers(app):
     app.register_error_handler(Forbidden, handle_forbidden_error)
     app.register_error_handler(MethodNotAllowed, handle_method_not_allowed_error)
     app.register_error_handler(Exception, handle_server_error)
+
+    # Initialize and configure JWTManager
+    jwt = JWTManager(app)
+    jwt.expired_token_loader(expired_token_callback)

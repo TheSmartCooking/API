@@ -1,9 +1,10 @@
 from .authentication import authentications_blueprint
-from .recipes import recipes_blueprint
-from .persons import persons_blueprint
-from .tags import tags_blueprint
 from .locales import locales_blueprint
+from .persons import persons_blueprint
+from .recipes import recipes_blueprint
 from .statuses import statuses_blueprint
+from .tags import tags_blueprint
+
 
 def register_routes(app):
     app.register_blueprint(authentications_blueprint, url_prefix="/authentication")

@@ -3,6 +3,8 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from config import Config
 from error_handlers import register_error_handlers
@@ -12,6 +14,13 @@ from routes import register_routes
 load_dotenv()
 
 app = Flask(__name__)
+
+# Initialize the limiter
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["1000 per day", "200 per hour", "30 per minute"],
+    app=app,
+)
 
 # Load configuration from Config class
 app.config.from_object(Config)

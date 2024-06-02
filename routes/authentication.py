@@ -70,7 +70,9 @@ def login():
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.execute("SELECT password, salt FROM person WHERE email = %s", (email,))
+        cursor.execute(
+            "SELECT name, password, salt FROM person WHERE email = %s", (email,)
+        )
         user = cursor.fetchone()
 
         if user:
@@ -81,7 +83,9 @@ def login():
 
             try:
                 ph.verify(stored_password, password_with_pepper)
-                access_token = create_access_token(identity={"username": email})
+                access_token = create_access_token(
+                    identity={"email": email, "username": user["name"]}
+                )
                 return jsonify(access_token=access_token), 200
             except VerifyMismatchError:
                 pass

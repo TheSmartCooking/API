@@ -17,8 +17,8 @@ ph = PasswordHasher()
 
 
 def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> str:
-    pepper = os.getenv("PEPPER").encode("utf-8")
-    password_with_pepper = pepper + salt + password.encode("utf-8")
+    pepper = os.getenv("PEPPER")
+    password_with_pepper = pepper.encode("utf-8") + salt + password.encode("utf-8")
     hash = ph.hash(password_with_pepper)
     return hash
 

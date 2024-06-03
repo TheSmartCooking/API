@@ -19,16 +19,21 @@ def upload_file():
         return jsonify(error="No file part in the request"), 400
 
     file = request.files["file"]
+    data = request.form.get("data")
+    image_type = data.get("image_type")
 
     if file.filename == "":
         return jsonify(error="No selected file"), 400
 
     if file and allowed_file(file.filename):
         # Change filename to a random string
-        filename = os.urandom(15).hex() + "." + file.filename.rsplit(".", 1)[1].lower()
+        filename = os.urandom(15).hex() + file.filename.rsplit(".", 1)[1].lower()
         path = os.path.join(IMAGES_FOLDER, filename)
 
-        file.save(path)
-        return jsonify(message="File successfully uploaded"), 200
+        db = get_db_connection()
+        with db.cursor() as cursor:
+            cursor.callproc("create_image", [path, image_type])
+            file.save(path)
+            return jsonify(message="File successfully uploaded"), 200
     else:
         return jsonify(message="File type is not allowed"), 400

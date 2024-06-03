@@ -15,6 +15,7 @@ def allowed_file(filename):
 
 @uploads_blueprint.route("/image", methods=["POST"])
 @limiter.limit("2 per minute")
+@limiter.limit("10 per day")
 def upload_file():
     if "file" not in request.files:
         return jsonify(error="No file part in the request"), 400

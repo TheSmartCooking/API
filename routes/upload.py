@@ -19,8 +19,7 @@ def upload_file():
         return jsonify(error="No file part in the request"), 400
 
     file = request.files["file"]
-    data = request.form.get("data")
-    image_type = data.get("image_type")
+    image_type = request.form.get("image_type")
 
     if file.filename == "":
         return jsonify(error="No selected file"), 400

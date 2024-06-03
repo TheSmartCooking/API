@@ -25,7 +25,7 @@ def upload_file():
 
     if file and allowed_file(file.filename):
         # Change filename to a random string
-        filename = os.urandom(15).hex() + file.filename.rsplit(".", 1)[1].lower()
+        filename = os.urandom(15).hex() + "." + file.filename.rsplit(".", 1)[1].lower()
         path = os.path.join(IMAGES_FOLDER, filename)
 
         file.save(path)

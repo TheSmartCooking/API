@@ -6,7 +6,7 @@ from db import get_db_connection
 recipes_blueprint = Blueprint("recipes", __name__)
 
 
-@recipes_blueprint.route("/", methods=["GET"])
+@recipes_blueprint.route("", methods=["GET"])
 def get_paginated_recipes():
     locale_code = request.args.get("locale_code")
     status_name = request.args.get("status_name")

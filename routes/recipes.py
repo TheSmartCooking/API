@@ -10,10 +10,10 @@ recipes_blueprint = Blueprint("recipes", __name__)
 def get_paginated_recipes():
     locale_code = request.args.get("locale_code", "en_US")
     status_name = request.args.get("status_name", "published")
-    tags = request.args.get("tags", None)
     page = int(request.args.get("page", DEFAULT_PAGE))
     page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))
     sort_order = request.args.get("sort_order", "most_popular")
+    tags = request.args.get("tags", None)
 
     db = get_db_connection()
     with db.cursor() as cursor:

@@ -6,7 +6,7 @@ from db import get_db_connection
 tags_blueprint = Blueprint("tags", __name__)
 
 
-@tags_blueprint.route("/", methods=["GET"])
+@tags_blueprint.route("/list", methods=["GET"])
 def get_paginated_tags():
     page = int(request.args.get("page", DEFAULT_PAGE))
     page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))

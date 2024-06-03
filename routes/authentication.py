@@ -78,6 +78,7 @@ def login():
         cursor.execute(
             "SELECT person_id, password, salt FROM person WHERE email = %s", (email,)
         )
+        cursor.callproc("update_last_login", (user["person_id"],))
         user = cursor.fetchone()
 
         if user:

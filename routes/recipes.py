@@ -8,8 +8,8 @@ recipes_blueprint = Blueprint("recipes", __name__)
 
 @recipes_blueprint.route("", methods=["GET"])
 def get_paginated_recipes():
-    locale_code = request.args.get("locale_code")
-    status_name = request.args.get("status_name")
+    locale_code = request.args.get("locale_code", "en_US")
+    status_name = request.args.get("status_name", "published")
     tags = request.args.get("tags", None)
     page = int(request.args.get("page", DEFAULT_PAGE))
     page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))

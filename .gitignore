@@ -1,3 +1,6 @@
+# Upload folder
+images/
+
 # Environment variables file
 .env
 

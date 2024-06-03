@@ -79,9 +79,11 @@ def login():
             "SELECT person_id, password, salt FROM person WHERE email = %s", (email,)
         )
         user = cursor.fetchone()
-        cursor.callproc("update_last_login", (user["person_id"],))
 
         if user:
+            cursor.callproc("update_last_login", (user["person_id"],))
+            db.commit()
+
             stored_password = user["password"]
             salt = user["salt"]
             pepper = os.getenv("PEPPER").encode("utf-8")

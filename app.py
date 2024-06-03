@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify
-from flask_limiter import Limiter
 
 from config import IMAGES_FOLDER, Config, limiter
 from error_handlers import register_error_handlers

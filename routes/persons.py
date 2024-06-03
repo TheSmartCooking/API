@@ -46,8 +46,8 @@ def get_comments_by_person(person_id):
     return jsonify(comments)
 
 
-@jwt_required
 @persons_blueprint.route("/<int:person_id>/favorites", methods=["GET"])
+@jwt_required
 def get_favorites_by_person_id(person_id):
     db = get_db_connection()
     with db.cursor() as cursor:

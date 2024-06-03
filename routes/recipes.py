@@ -10,18 +10,17 @@ recipes_blueprint = Blueprint("recipes", __name__)
 def get_paginated_recipes():
     locale_code = request.args.get("locale_code")
     status_name = request.args.get("status_name")
-    tags = request.args.get("tags")
+    tags = request.args.get("tags", None)
     page = int(request.args.get("page", DEFAULT_PAGE))
     page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))
+    sort_order = request.args.get("sort_order", "most_popular")
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        if tags:
-            cursor.callproc("get_recipes_by_tags", [tags, page, page_size])
-        else:
-            cursor.callproc(
-                "get_paginated_recipes", [locale_code, status_name, page, page_size]
-            )
+        cursor.callproc(
+            "get_paginated_recipes",
+            [locale_code, status_name, page, page_size, sort_order, tags],
+        )
 
         recipes = cursor.fetchall()
     db.close()

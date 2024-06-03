@@ -7,7 +7,7 @@
     "files.trimTrailingWhitespace": true,
     "[python]": {
         "editor.rulers": [
-            100
+            88
         ],
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,

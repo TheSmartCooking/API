@@ -63,10 +63,13 @@ def register_error_handlers(app):
     app.register_error_handler(Unauthorized, handle_unauthorized_error)
     app.register_error_handler(Forbidden, handle_forbidden_error)
     app.register_error_handler(MethodNotAllowed, handle_method_not_allowed_error)
-    app.register_error_handler(Exception, handle_server_error)
+
+    # Handle RateLimitExceeded before general Exception handler
+    app.register_error_handler(RateLimitExceeded, handle_rate_limit_exceeded_error)
 
     # Initialize and configure JWTManager
     jwt = JWTManager(app)
     jwt.expired_token_loader(expired_token_callback)
 
-    app.register_error_handler(RateLimitExceeded, handle_rate_limit_exceeded_error)
+    # Catch-all for other exceptions
+    app.register_error_handler(Exception, handle_server_error)

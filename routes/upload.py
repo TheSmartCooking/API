@@ -15,9 +15,6 @@ def allowed_file(filename):
 
 @uploads_blueprint.route("/image", methods=["POST"])
 def upload_file():
-    data = request.get_json()
-    image_type = data.get("image_type")
-
     if "file" not in request.files:
         return jsonify(error="No file part in the request"), 400
 
@@ -31,10 +28,7 @@ def upload_file():
         filename = os.urandom(15).hex() + file.filename.rsplit(".", 1)[1].lower()
         path = os.path.join(IMAGES_FOLDER, filename)
 
-        db = get_db_connection()
-        with db.cursor() as cursor:
-            cursor.callproc("create_image", [path, image_type])
-            file.save(path)
-            return jsonify(message="File successfully uploaded"), 200
+        file.save(path)
+        return jsonify(message="File successfully uploaded"), 200
     else:
         return jsonify(message="File type is not allowed"), 400

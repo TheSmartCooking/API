@@ -77,7 +77,7 @@ def delete_comment():
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.callproc("delete_comment", (comment_id))
+        cursor.callproc("delete_comment", (comment_id,))
         db.commit()
     db.close()
 

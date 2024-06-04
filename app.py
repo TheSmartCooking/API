@@ -1,10 +1,11 @@
 import os
 from datetime import timedelta
 
+import requests
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
-from config import IMAGES_FOLDER, Config, limiter
+from config import IMAGES_FOLDER, VPNAPI_KEY, Config, limiter
 from error_handlers import register_error_handlers
 from routes import register_routes
 
@@ -12,6 +13,19 @@ from routes import register_routes
 load_dotenv()
 
 app = Flask(__name__)
+
+
+# Prevent VPNs and proxies from accessing the API
+@app.before_request
+def before_request():
+    data = requests.get(
+        f"https://vpnapi.io/api/{request.remote_addr}?key={VPNAPI_KEY}"
+    ).json()
+
+    # If the IP is a VPN, return a 403 Forbidden response
+    if "security" in data and any(data["security"].values()):
+        return jsonify(message="You are not allowed to access this resource"), 403
+
 
 # Load configuration from Config class
 app.config.from_object(Config)

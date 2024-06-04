@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
+from config import DEFAULT_PAGE, DEFAULT_PAGE_SIZE
 from db import get_db_connection
 
 persons_blueprint = Blueprint("persons", __name__)
@@ -19,9 +20,12 @@ def get_person_by_id(person_id):
 
 @persons_blueprint.route("/<int:person_id>/recipes", methods=["GET"])
 def get_recipes_by_author(person_id):
+    page = int(request.args.get("page", DEFAULT_PAGE))
+    page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))
+
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.callproc("get_recipes_by_author", [person_id])
+        cursor.callproc("get_recipes_by_author", [person_id, page, page_size])
         recipes = cursor.fetchall()
     db.close()
 
@@ -30,9 +34,12 @@ def get_recipes_by_author(person_id):
 
 @persons_blueprint.route("/<int:person_id>/comments", methods=["GET"])
 def get_comments_by_person(person_id):
+    page = int(request.args.get("page", DEFAULT_PAGE))
+    page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))
+
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.callproc("get_comments_by_person", [person_id])
+        cursor.callproc("get_comments_by_person", [person_id, page, page_size])
         comments = cursor.fetchall()
     db.close()
 

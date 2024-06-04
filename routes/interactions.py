@@ -73,6 +73,8 @@ def comment_recipe():
 def delete_comment():
     comment_id = request.args.get("comment_id")
 
+    # TODO: Load the comment first to verify that the user is the author
+
     db = get_db_connection()
     with db.cursor() as cursor:
         cursor.callproc("delete_comment", (comment_id))

@@ -71,12 +71,11 @@ def comment_recipe():
 @interactions_blueprint.route("/comment", methods=["DELETE"])
 @jwt_required()
 def delete_comment():
-    current_user = get_jwt_identity()
     comment_id = request.args.get("comment_id")
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.callproc("delete_comment", (current_user, comment_id))
+        cursor.callproc("delete_comment", (comment_id))
         db.commit()
     db.close()
 

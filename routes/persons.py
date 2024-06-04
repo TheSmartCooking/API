@@ -33,7 +33,13 @@ def get_recipes_by_author(person_id):
 
 
 @persons_blueprint.route("/<int:person_id>/comments", methods=["GET"])
+@jwt_required()
 def get_comments_by_person(person_id):
+    current_user = get_jwt_identity()
+
+    if current_user != person_id:
+        return jsonify(message="Unauthorized"), 401
+
     page = int(request.args.get("page", DEFAULT_PAGE))
     page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))
 

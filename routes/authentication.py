@@ -109,5 +109,10 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     current_user = get_jwt_identity()
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc("update_last_login", (current_user,))
+        db.commit()
+    db.close()
     new_access_token = create_access_token(identity=current_user, fresh=False)
     return jsonify(access_token=new_access_token), 200

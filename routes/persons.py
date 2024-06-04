@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from db import get_db_connection
 
@@ -39,7 +40,13 @@ def get_comments_by_person(person_id):
 
 
 @persons_blueprint.route("/<int:person_id>/favorites", methods=["GET"])
+@jwt_required()
 def get_favorites_by_person_id(person_id):
+    current_user = get_jwt_identity()
+
+    if current_user != person_id:
+        return jsonify(message="Unauthorized"), 401
+
     db = get_db_connection()
     with db.cursor() as cursor:
         cursor.callproc("get_favorites_by_person_id", [person_id])

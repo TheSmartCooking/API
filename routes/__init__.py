@@ -1,5 +1,5 @@
 from .authentication import authentications_blueprint
-from .image import images_blueprint
+from .images import images_blueprint
 from .locales import locales_blueprint
 from .persons import persons_blueprint
 from .recipes import recipes_blueprint

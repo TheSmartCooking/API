@@ -1,22 +1,22 @@
 import os
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 
 from config import IMAGES_FOLDER, limiter
 from db import get_db_connection
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
-uploads_blueprint = Blueprint("uploads", __name__)
+images_blueprint = Blueprint("images", __name__)
 
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@uploads_blueprint.route("/image", methods=["POST"])
+@images_blueprint.route("", methods=["POST"])
 @limiter.limit("2 per minute")
 @limiter.limit("10 per day")
-def upload_file():
+def upload_image():
     if "file" not in request.files:
         return jsonify(error="No file part in the request"), 400
 
@@ -38,3 +38,8 @@ def upload_file():
             return jsonify(message="File successfully uploaded"), 200
     else:
         return jsonify(message="File type is not allowed"), 400
+
+
+@images_blueprint.route("/<path:filename>", methods=["GET"])
+def get_image(filename):
+    return send_from_directory(IMAGES_FOLDER, filename)

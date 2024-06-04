@@ -7,6 +7,7 @@ from werkzeug.exceptions import (
     Forbidden,
     MethodNotAllowed,
     NotFound,
+    RequestEntityTooLarge,
     Unauthorized,
 )
 
@@ -56,6 +57,11 @@ def handle_rate_limit_exceeded_error(error):
     return jsonify(error="Rate limit exceeded"), 429
 
 
+def handle_request_entity_too_large_error(error):
+    current_app.logger.error(f"Request entity too large: {error}")
+    return jsonify(error="Request entity too large"), 413
+
+
 def register_error_handlers(app):
     app.register_error_handler(DatabaseError, handle_database_error)
     app.register_error_handler(NotFound, handle_not_found_error)
@@ -63,6 +69,9 @@ def register_error_handlers(app):
     app.register_error_handler(Unauthorized, handle_unauthorized_error)
     app.register_error_handler(Forbidden, handle_forbidden_error)
     app.register_error_handler(MethodNotAllowed, handle_method_not_allowed_error)
+    app.register_error_handler(
+        RequestEntityTooLarge, handle_request_entity_too_large_error
+    )
 
     # Handle RateLimitExceeded before general Exception handler
     app.register_error_handler(RateLimitExceeded, handle_rate_limit_exceeded_error)

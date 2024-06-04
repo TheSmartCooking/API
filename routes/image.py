@@ -1,6 +1,7 @@
 import os
 
 from flask import Blueprint, jsonify, request, send_from_directory
+from flask_jwt_extended import jwt_required
 
 from config import IMAGES_FOLDER, limiter
 from db import get_db_connection
@@ -16,6 +17,7 @@ def allowed_file(filename):
 @images_blueprint.route("", methods=["POST"])
 @limiter.limit("2 per minute")
 @limiter.limit("10 per day")
+@jwt_required()
 def upload_image():
     if "file" not in request.files:
         return jsonify(error="No file part in the request"), 400

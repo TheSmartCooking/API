@@ -40,6 +40,7 @@ def register():
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
+    locale_code = data.get("locale_code", "en_US")
 
     if not username or not email or not password:
         return jsonify(message="Username, email, and password are required"), 400
@@ -53,7 +54,9 @@ def register():
     db = get_db_connection()
     with db.cursor() as cursor:
         try:
-            cursor.callproc("create_person", (username, email, hashed_password, salt))
+            cursor.callproc(
+                "create_person", (username, email, hashed_password, salt, locale_code)
+            )
             db.commit()
         except MySQLError as e:
             if e.args[0] == 1644:

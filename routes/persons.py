@@ -67,3 +67,23 @@ def get_favorites_by_person_id(person_id):
     db.close()
 
     return jsonify(favorites)
+
+
+@persons_blueprint.route("/<int:person_id>/locale", methods=["POST"])
+@jwt_required()
+def update_person_locale(person_id):
+    current_user = get_jwt_identity()
+
+    if current_user != person_id:
+        return jsonify(message="Unauthorized"), 401
+
+    data = request.get_json()
+    locale_code = data.get("locale_code")
+
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc("update_person_locale", [person_id, locale_code])
+        db.commit()
+    db.close()
+
+    return jsonify(message="Locale updated successfully")

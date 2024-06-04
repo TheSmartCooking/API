@@ -35,6 +35,7 @@ app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 app.config["IMAGES_FOLDER"] = IMAGES_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024  # 1 MB
 
 limiter.init_app(app)
 

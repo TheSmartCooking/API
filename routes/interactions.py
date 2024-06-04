@@ -83,7 +83,7 @@ def delete_comment():
     return jsonify(message="Comment successfully deleted"), 200
 
 
-@interactions_blueprint.route("/like-comment", methods=["GET"])
+@interactions_blueprint.route("/like-comment", methods=["POST"])
 @jwt_required()
 def like_comment():
     current_user = get_jwt_identity()
@@ -98,7 +98,7 @@ def like_comment():
     return jsonify(message="Comment successfully liked"), 200
 
 
-@interactions_blueprint.route("/unlike-comment", methods=["GET"])
+@interactions_blueprint.route("/unlike-comment", methods=["POST"])
 @jwt_required()
 def unlike_comment():
     current_user = get_jwt_identity()

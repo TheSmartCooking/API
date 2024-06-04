@@ -10,7 +10,7 @@ interactions_blueprint = Blueprint("interactions", __name__)
 @jwt_required()
 def favorite_recipe():
     current_user = get_jwt_identity()
-    recipe_id = request.json.get("recipe_id")
+    recipe_id = request.args.get("recipe_id")
 
     db = get_db_connection()
     with db.cursor() as cursor:
@@ -25,7 +25,7 @@ def favorite_recipe():
 @jwt_required()
 def unfavorite_recipe():
     current_user = get_jwt_identity()
-    recipe_id = request.json.get("recipe_id")
+    recipe_id = request.args.get("recipe_id")
 
     db = get_db_connection()
     with db.cursor() as cursor:
@@ -40,7 +40,7 @@ def unfavorite_recipe():
 @jwt_required()
 def rate_recipe():
     current_user = get_jwt_identity()
-    recipe_id = request.json.get("recipe_id")
+    recipe_id = request.args.get("recipe_id")
     rating = request.json.get("rating")
 
     db = get_db_connection()
@@ -56,7 +56,7 @@ def rate_recipe():
 @jwt_required()
 def comment_recipe():
     current_user = get_jwt_identity()
-    recipe_id = request.json.get("recipe_id")
+    recipe_id = request.args.get("recipe_id")
     comment = request.json.get("comment")
 
     db = get_db_connection()
@@ -71,7 +71,7 @@ def comment_recipe():
 @interactions_blueprint.route("/comment", methods=["DELETE"])
 @jwt_required()
 def delete_comment():
-    comment_id = request.json.get("comment_id")
+    comment_id = request.args.get("comment_id")
 
     # TODO: Load the comment first to verify that the user is the author
 
@@ -88,7 +88,7 @@ def delete_comment():
 @jwt_required()
 def like_comment():
     current_user = get_jwt_identity()
-    comment_id = request.json.get("comment_id")
+    comment_id = request.args.get("comment_id")
 
     db = get_db_connection()
     with db.cursor() as cursor:
@@ -103,7 +103,7 @@ def like_comment():
 @jwt_required()
 def unlike_comment():
     current_user = get_jwt_identity()
-    comment_id = request.json.get("comment_id")
+    comment_id = request.args.get("comment_id")
 
     db = get_db_connection()
     with db.cursor() as cursor:

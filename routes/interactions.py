@@ -21,7 +21,7 @@ def favorite_recipe():
     return jsonify(message="Recipe successfully favorited"), 200
 
 
-@interactions_blueprint.route("/unfavorite", methods=["POST"])
+@interactions_blueprint.route("/favorite", methods=["DELETE"])
 @jwt_required()
 def unfavorite_recipe():
     current_user = get_jwt_identity()
@@ -68,7 +68,7 @@ def comment_recipe():
     return jsonify(message="Comment successfully created"), 200
 
 
-@interactions_blueprint.route("/delete-comment", methods=["POST"])
+@interactions_blueprint.route("/comment", methods=["DELETE"])
 @jwt_required()
 def delete_comment():
     current_user = get_jwt_identity()
@@ -98,7 +98,7 @@ def like_comment():
     return jsonify(message="Comment successfully liked"), 200
 
 
-@interactions_blueprint.route("/unlike-comment", methods=["POST"])
+@interactions_blueprint.route("/like-comment", methods=["DELETE"])
 @jwt_required()
 def unlike_comment():
     current_user = get_jwt_identity()

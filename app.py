@@ -1,19 +1,12 @@
 import os
 from datetime import timedelta
 
-import requests
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 
-from config import IMAGES_FOLDER, VPNAPI_KEY, Config, limiter
+from config import IMAGES_FOLDER, Config, limiter
 from error_handlers import register_error_handlers
-from middleware import (
-    check_headers,
-    check_user_agent,
-    check_vpn,
-    set_csp,
-    set_secure_headers,
-)
+from middleware import check_user_agent, check_vpn, set_csp, set_secure_headers
 from routes import register_routes
 
 # Load environment variables from .env file

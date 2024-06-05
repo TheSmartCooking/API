@@ -6,6 +6,15 @@ from flask import jsonify, request
 VPNAPI_KEY = "your_vpnapi_key"
 
 
+def get_client_ip():
+    if "X-Forwarded-For" in request.headers:
+        # X-Forwarded-For can contain multiple IPs, we need the first one
+        ip = request.headers["X-Forwarded-For"].split(",")[0].strip()
+    else:
+        ip = request.remote_addr
+    return ip
+
+
 def check_user_agent():
     user_agent = request.headers.get("User-Agent")
     if (
@@ -17,9 +26,8 @@ def check_user_agent():
 
 
 def check_vpn():
-    data = requests.get(
-        f"https://vpnapi.io/api/{request.remote_addr}?key={VPNAPI_KEY}"
-    ).json()
+    ip = get_client_ip()
+    data = requests.get(f"https://vpnapi.io/api/{ip}?key={VPNAPI_KEY}").json()
 
     if "security" in data and any(data["security"].values()):
         return jsonify(message="You are not allowed to access this resource"), 403

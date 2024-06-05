@@ -7,6 +7,13 @@ from flask import Flask, jsonify, request
 
 from config import IMAGES_FOLDER, VPNAPI_KEY, Config, limiter
 from error_handlers import register_error_handlers
+from middleware import (
+    check_headers,
+    check_user_agent,
+    check_vpn,
+    set_csp,
+    set_secure_headers,
+)
 from routes import register_routes
 
 # Load environment variables from .env file
@@ -15,16 +22,35 @@ load_dotenv()
 app = Flask(__name__)
 
 
-# Prevent VPNs and proxies from accessing the API
 @app.before_request
 def before_request():
-    data = requests.get(
-        f"https://vpnapi.io/api/{request.remote_addr}?key={VPNAPI_KEY}"
-    ).json()
+    # Check headers
+    response = check_headers()
+    if response:
+        return response
 
-    # If the IP is a VPN, return a 403 Forbidden response
-    if "security" in data and any(data["security"].values()):
-        return jsonify(message="You are not allowed to access this resource"), 403
+    # Check User-Agent
+    response = check_user_agent()
+    if response:
+        return response
+
+    # Check VPN, Proxy, Tor Node and Relay
+    response = check_vpn()
+    if response:
+        return response
+
+
+@app.after_request
+def after_request(response):
+    # Set content security policy and secure headers
+    response = set_csp(response)
+    if response:
+        return response
+
+    # Set secure headers
+    response = set_secure_headers(response)
+    if response:
+        return response
 
 
 # Load configuration from Config class

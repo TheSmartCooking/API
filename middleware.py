@@ -6,11 +6,6 @@ from flask import jsonify, request
 VPNAPI_KEY = "your_vpnapi_key"
 
 
-def check_headers():
-    if "X-Requested-With" not in request.headers:
-        return jsonify(message="Missing required headers"), 400
-
-
 def check_user_agent():
     user_agent = request.headers.get("User-Agent")
     if (

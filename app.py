@@ -24,11 +24,6 @@ app = Flask(__name__)
 
 @app.before_request
 def before_request():
-    # Check headers
-    response = check_headers()
-    if response:
-        return response
-
     # Check User-Agent
     response = check_user_agent()
     if response:

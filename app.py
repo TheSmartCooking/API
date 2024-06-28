@@ -4,6 +4,7 @@ from datetime import timedelta
 import requests
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 from config import IMAGES_FOLDER, VPNAPI_KEY, Config, limiter
 from error_handlers import register_error_handlers
@@ -13,6 +14,7 @@ from routes import register_routes
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 
 # Prevent VPNs and proxies from accessing the API

@@ -52,10 +52,4 @@ register_routes(app)
 register_error_handlers(app)
 
 if __name__ == "__main__":
-    # Run the app with specified host and port from environment variables
-    app.run(
-        ssl_context=("cert.pem", "key.pem"),
-        host="0.0.0.0",
-        port=int(os.getenv("PORT", 5000)),
-        debug=False,
-    )
+    app.run(host="0.0.0.0", port=5000)

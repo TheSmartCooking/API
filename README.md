@@ -16,7 +16,7 @@ To run the API locally, you’ll need:
    ```
 2. **Run the Docker Container**:
    ```bash
-   docker run -d -p 5000:5000 --name SmartCooking_API smartcooking-flask_api
+   docker run -d -p 5000:5000 --name Smart-Cooking_API smartcooking-flask_api
    ```
 3. **Access the API**:
    Open your browser or API client to `http://localhost:5000`.

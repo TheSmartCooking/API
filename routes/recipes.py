@@ -12,7 +12,7 @@ def get_paginated_recipes():
     status_name = request.args.get("status_name", "published")
     page = int(request.args.get("page", DEFAULT_PAGE))
     page_size = int(request.args.get("page_size", DEFAULT_PAGE_SIZE))
-    sort_order = request.args.get("sort_order", "most_popular")
+    sort_order = request.args.get("sort_order", None)
     tags = request.args.get("tags", None)
 
     db = get_db_connection()

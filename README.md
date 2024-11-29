@@ -1,6 +1,6 @@
 # Smart Cooking API
 
-This is the backend API for the Smart Cooking website, providing essential services and data to support website functionality.
+This is the backend API for the Smart Cooking site, providing essential services and data to support site functionality.
 
 ## Getting Started
 

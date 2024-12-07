@@ -78,26 +78,21 @@ def login():
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.execute(
-            "SELECT person_id, password, salt FROM person WHERE email = %s", (email,)
-        )
-        user = cursor.fetchone()
+        cursor.callproc("login_person", (email,))
+        person = cursor.fetchone()
 
-        if user:
-            cursor.callproc("update_last_login", (user["person_id"],))
-            db.commit()
-
-            stored_password = user["password"]
-            salt = user["salt"]
+        if person:
+            stored_password = person["hashed_password"]
+            salt = person["salt"]
             pepper = os.getenv("PEPPER", "SuperSecretPepper").encode("utf-8")
             password_with_pepper = pepper + salt + password.encode("utf-8")
 
             try:
                 ph.verify(stored_password, password_with_pepper)
                 access_token = create_access_token(
-                    identity=user["person_id"], fresh=True
+                    identity=person["person_id"], fresh=True
                 )
-                refresh_token = create_refresh_token(identity=user["person_id"])
+                refresh_token = create_refresh_token(identity=person["person_id"])
                 return (
                     jsonify(access_token=access_token, refresh_token=refresh_token),
                     200,

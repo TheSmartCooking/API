@@ -22,7 +22,7 @@ ph = PasswordHasher()
 
 
 def hash_password_with_salt_and_pepper(password: str, salt: bytes) -> str:
-    pepper = os.getenv("PEPPER").encode("utf-8")
+    pepper = os.getenv("PEPPER", "SuperSecretPepper").encode("utf-8")
     password_with_pepper = pepper + salt + password.encode("utf-8")
     hash = ph.hash(password_with_pepper)
     return hash
@@ -40,7 +40,7 @@ def register():
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
-    locale_code = data.get("locale_code", "en_US")
+    locale_code = data.get("locale_code", "en")
 
     if not username or not email or not password:
         return jsonify(message="Username, email, and password are required"), 400
@@ -55,7 +55,7 @@ def register():
     with db.cursor() as cursor:
         try:
             cursor.callproc(
-                "create_person", (username, email, hashed_password, salt, locale_code)
+                "register_person", (username, email, hashed_password, salt, locale_code)
             )
             db.commit()
         except MySQLError as e:
@@ -89,7 +89,7 @@ def login():
 
             stored_password = user["password"]
             salt = user["salt"]
-            pepper = os.getenv("PEPPER").encode("utf-8")
+            pepper = os.getenv("PEPPER", "SuperSecretPepper").encode("utf-8")
             password_with_pepper = pepper + salt + password.encode("utf-8")
 
             try:

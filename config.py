@@ -17,10 +17,6 @@ class Config:
     MYSQL_DB = os.getenv("DB_NAME", "smartcooking")
     MYSQL_CURSORCLASS = "DictCursor"
 
-    # Pagination configuration
-    DEFAULT_PAGE = 1
-    DEFAULT_PAGE_SIZE = 10
-
     # JWT configuration
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRY = timedelta(hours=1)
@@ -30,6 +26,9 @@ class Config:
     IMAGES_FOLDER = os.path.join(os.getcwd(), "images")
     MAX_CONTENT_LENGTH = 1024 * 1024  # 1 MB
 
+
+# Pagination configuration
+DEFAULT_PAGE_SIZE = 10
 
 if not os.path.exists(Config.IMAGES_FOLDER):
     os.makedirs(Config.IMAGES_FOLDER)

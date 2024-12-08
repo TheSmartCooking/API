@@ -22,9 +22,11 @@ def get_all_recipes():
 
 @recipe_blueprint.route("/<int:recipe_id>", methods=["GET"])
 def get_recipe_by_id(recipe_id):
+    locale = request.args.get("locale", "en")
+
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.callproc("get_recipe_by_id", (recipe_id,))
+        cursor.callproc("get_recipe_by_id", (recipe_id, locale))
         recipe = cursor.fetchone()
     db.close()
     return jsonify(recipe)

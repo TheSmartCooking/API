@@ -27,6 +27,12 @@ class Config:
     MAX_CONTENT_LENGTH = 1024 * 1024  # 1 MB
 
 
+# Image upload folder
+PICTURE_FOLDER = os.path.join(os.getcwd(), "picture")
+
+if not os.path.exists(PICTURE_FOLDER):
+    os.makedirs(PICTURE_FOLDER)
+
 # Pagination configuration
 DEFAULT_PAGE_SIZE = 10
 

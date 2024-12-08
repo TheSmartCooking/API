@@ -19,6 +19,41 @@ def extract_file_extension(filename):
     return filename.rsplit(".", 1)[1].lower()
 
 
+@picture_blueprint.route("/all", methods=["GET"])
+def get_all_pictures():
+    picture_type = request.args.get("type", None)
+
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc(
+            "get_all_pictures" if picture_type is None else "get_pictures_by_type",
+            (picture_type,),
+        )
+        pictures = cursor.fetchall()
+    db.close()
+    return jsonify(pictures)
+
+
+@picture_blueprint.route("/<int:picture_id>", methods=["GET"])
+def get_picture_by_id(picture_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc("get_picture_by_id", (picture_id,))
+        picture = cursor.fetchone()
+    db.close()
+    return jsonify(picture)
+
+
+@picture_blueprint.route("/author/<int:author_id>", methods=["GET"])
+def get_pictures_by_author(author_id):
+    db = get_db_connection()
+    with db.cursor() as cursor:
+        cursor.callproc("get_pictures_by_author", (author_id,))
+        picture = cursor.fetchall()
+    db.close()
+    return jsonify(picture)
+
+
 @picture_blueprint.route("/<path:filename>", methods=["GET"])
 def get_picture(filename):
     return send_from_directory(PICTURE_FOLDER, filename)
@@ -40,17 +75,18 @@ def upload_picture():
 
     match picture_type:
         case "recipe":
-            procedure = "insert_recipe_picture"
+            procedure = "insert_picture_recipe_picture"
         case "avatar":
-            procedure = "insert_avatar"
+            procedure = "insert_picture_avatar"
         case "language_icon":
-            procedure = "insert_language_icon"
+            procedure = "insert_picture_language_icon"
         case _:
             return jsonify({"error": f"Invalid picture type: {picture_type}"}), 400
 
     db = get_db_connection()
     with db.cursor() as cursor:
         cursor.callproc(procedure, (hexname, request.person_id))
+        db.commit()
     db.close()
 
     file.save(os.path.join(PICTURE_FOLDER, hexname))

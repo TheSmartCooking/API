@@ -7,6 +7,7 @@ from routes import register_routes
 app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app)
+limiter.init_app(app)
 
 if app.config["TESTING"]:
     limiter.enabled = False

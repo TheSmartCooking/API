@@ -21,12 +21,12 @@ class TokenError(Exception):
         self.message = message
 
 
-def generate_access_token(player_id: int) -> str:
+def generate_access_token(person_id: int) -> str:
     """
     Generate a short-lived JWT access token for a user.
     """
     payload = {
-        "player_id": player_id,
+        "person_id": person_id,
         "exp": datetime.now(timezone.utc) + JWT_ACCESS_TOKEN_EXPIRY,  # Expiration
         "iat": datetime.now(timezone.utc),  # Issued at
         "token_type": "access",
@@ -34,12 +34,12 @@ def generate_access_token(player_id: int) -> str:
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
 
 
-def generate_refresh_token(player_id: int) -> str:
+def generate_refresh_token(person_id: int) -> str:
     """
     Generate a long-lived refresh token for a user.
     """
     payload = {
-        "player_id": player_id,
+        "person_id": person_id,
         "exp": datetime.now(timezone.utc) + JWT_REFRESH_TOKEN_EXPIRY,
         "iat": datetime.now(timezone.utc),
         "token_type": "refresh",
@@ -82,7 +82,7 @@ def token_required(f):
         try:
             token = extract_token_from_header()
             decoded = verify_token(token, required_type="access")
-            request.player_id = decoded["player_id"]
+            request.person_id = decoded["person_id"]
             return f(*args, **kwargs)
         except TokenError as e:
             return jsonify(message=e.message), e.status_code

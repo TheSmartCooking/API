@@ -8,12 +8,13 @@ recipe_blueprint = Blueprint("recipe", __name__)
 
 @recipe_blueprint.route("/all", methods=["GET"])
 def get_all_recipes():
-    offset = max(0, request.args.get("page", DEFAULT_PAGE_SIZE, type=int))
+    offset = max(1, request.args.get("page", DEFAULT_PAGE_SIZE, type=int)) - 1
     limit = max(1, request.args.get("page_size", DEFAULT_PAGE_SIZE, type=int))
+    locale = request.args.get("locale", "en")
 
     db = get_db_connection()
     with db.cursor() as cursor:
-        cursor.callproc("get_all_recipes_paginated", (limit, offset))
+        cursor.callproc("get_all_recipes_paginated", (limit, offset, locale))
         recipes = cursor.fetchall()
     db.close()
     return jsonify(recipes)

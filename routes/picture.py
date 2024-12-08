@@ -15,6 +15,10 @@ def is_allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def extract_file_extension(filename):
+    return filename.rsplit(".", 1)[1].lower()
+
+
 @picture_blueprint.route("/<path:filename>", methods=["GET"])
 def get_picture(filename):
     return send_from_directory(PICTURE_FOLDER, filename)
@@ -32,7 +36,7 @@ def upload_picture():
     if not is_allowed_file(file.filename):
         return jsonify({"error": "Invalid file"}), 400
 
-    hexname = os.urandom(30).hex() + "." + file.filename.rsplit(".", 1)[1].lower()
+    hexname = os.urandom(30).hex() + "." + extract_file_extension(file.filename)
 
     match picture_type:
         case "recipe":
@@ -51,4 +55,4 @@ def upload_picture():
 
     file.save(os.path.join(PICTURE_FOLDER, hexname))
 
-    return jsonify({"picture_path": os.path.join(PICTURE_FOLDER, hexname)}), 201
+    return jsonify({"picture_path": hexname}), 201

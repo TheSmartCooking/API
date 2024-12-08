@@ -1,6 +1,4 @@
-from datetime import datetime, timedelta, timezone
-
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 
 from db import get_db_connection
 

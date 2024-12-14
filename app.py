@@ -1,45 +1,16 @@
-import os
-from datetime import timedelta
-
-import requests
-from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 
-from config import IMAGES_FOLDER, VPNAPI_KEY, Config, limiter
-from error_handlers import register_error_handlers
+from config import Config, limiter
 from routes import register_routes
 
-# Load environment variables from .env file
-load_dotenv()
-
 app = Flask(__name__)
-CORS(app)
-
-
-# Prevent VPNs and proxies from accessing the API
-@app.before_request
-def before_request():
-    data = requests.get(
-        f"https://vpnapi.io/api/{request.remote_addr}?key={VPNAPI_KEY}"
-    ).json()
-
-    # If the IP is a VPN, return a 403 Forbidden response
-    if "security" in data and any(data["security"].values()):
-        return jsonify(message="You are not allowed to access this resource"), 403
-
-
-# Load configuration from Config class
 app.config.from_object(Config)
-
-# Set JWT configuration from environment variables
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
-app.config["IMAGES_FOLDER"] = IMAGES_FOLDER
-app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024  # 1 MB
-
+CORS(app)
 limiter.init_app(app)
+
+if app.config["TESTING"]:
+    limiter.enabled = False
 
 
 @app.route("/")
@@ -49,7 +20,40 @@ def home():
 
 # Register routes and error handlers
 register_routes(app)
-register_error_handlers(app)
+
+
+# Add a status field to all JSON responses
+@app.after_request
+def add_status(response):
+    if response.is_json:
+        original_data = response.get_json()
+        new_response = {
+            "success": response.status_code in range(200, 300),
+            "data": original_data if original_data != [] else None,
+        }
+        response.set_data(jsonify(new_response).data)
+    return response
+
+
+@app.after_request
+def add_common_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
+@app.errorhandler(429)
+def ratelimit_error(e):
+    return (
+        jsonify(
+            {
+                "error": "Too many requests",
+                "message": "Rate limit exceeded. Please try again later.",
+                "rate_limit": e.description,
+            }
+        ),
+        429,
+    )
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

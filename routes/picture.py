@@ -89,6 +89,9 @@ def upload_picture():
         db.commit()
     db.close()
 
-    file.save(os.path.join(PICTURE_FOLDER, hexname))
+    fullpath = os.path.normpath(os.path.join(PICTURE_FOLDER, hexname))
+    if not fullpath.startswith(PICTURE_FOLDER):
+        return jsonify({"error": "Invalid file path"}), 400
+    file.save(fullpath)
 
     return jsonify({"picture_path": hexname}), 201

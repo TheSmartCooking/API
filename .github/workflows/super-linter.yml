@@ -1,11 +1,11 @@
 ---
 name: Lint
 
-on:  # yamllint disable-line rule:truthy
+on:
   push: null
   pull_request: null
 
-permissions: { }
+permissions: {}
 
 jobs:
   build:
@@ -27,12 +27,12 @@ jobs:
           fetch-depth: 0
 
       - name: Super-linter
-        uses: super-linter/super-linter@v6.5.1  # x-release-please-version
+        uses: super-linter/super-linter@v7.2.1
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
           VALIDATE_JSCPD: false
           VALIDATE_PYTHON_ISORT: false
           VALIDATE_PYTHON_PYLINT: false
           VALIDATE_PYTHON_MYPY: false
-...

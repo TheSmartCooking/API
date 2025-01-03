@@ -109,8 +109,8 @@ def login():
             password, person["hashed_password"], person["salt"]
         ):
             return jsonify(message="Invalid credentials"), 401
-    except Exception as e:
-        return jsonify(message="An error occurred", error=str(e)), 500
+    except Exception:
+        return jsonify(message="An internal error occurred"), 500
 
     person_id = person["person_id"]
     access_token = generate_access_token(person_id)

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from flask import Blueprint, jsonify, request
 from pymysql import MySQLError
 
-from db import database_cursor, get_db_connection
+from db import database_cursor
 from jwt_helper import (
     TokenError,
     extract_token_from_header,

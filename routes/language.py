@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from db import database_cursor, get_db_connection
+from db import database_cursor
 
 language_blueprint = Blueprint("language", __name__)
 

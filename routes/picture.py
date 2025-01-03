@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, jsonify, request, send_from_directory
 
 from config import PICTURE_FOLDER
-from db import get_db_connection
+from db import database_cursor, get_db_connection
 from jwt_helper import token_required
 
 picture_blueprint = Blueprint("picture", __name__)
@@ -23,34 +23,28 @@ def extract_file_extension(filename):
 def get_all_pictures():
     picture_type = request.args.get("type", None)
 
-    db = get_db_connection()
-    with db.cursor() as cursor:
+    with database_cursor() as cursor:
         cursor.callproc(
             "get_all_pictures" if picture_type is None else "get_pictures_by_type",
             (picture_type,),
         )
         pictures = cursor.fetchall()
-    db.close()
     return jsonify(pictures)
 
 
 @picture_blueprint.route("/<int:picture_id>", methods=["GET"])
 def get_picture_by_id(picture_id):
-    db = get_db_connection()
-    with db.cursor() as cursor:
+    with database_cursor() as cursor:
         cursor.callproc("get_picture_by_id", (picture_id,))
         picture = cursor.fetchone()
-    db.close()
     return jsonify(picture)
 
 
 @picture_blueprint.route("/author/<int:author_id>", methods=["GET"])
 def get_pictures_by_author(author_id):
-    db = get_db_connection()
-    with db.cursor() as cursor:
+    with database_cursor() as cursor:
         cursor.callproc("get_pictures_by_author", (author_id,))
         picture = cursor.fetchall()
-    db.close()
     return jsonify(picture)
 
 
@@ -84,10 +78,9 @@ def upload_picture():
             return jsonify({"error": f"Invalid picture type: {picture_type}"}), 400
 
     db = get_db_connection()
-    with db.cursor() as cursor:
+    with database_cursor() as cursor:
         cursor.callproc(procedure, (hexname, request.person_id))
         db.commit()
-    db.close()
 
     fullpath = os.path.normpath(os.path.join(PICTURE_FOLDER, hexname))
     if not fullpath.startswith(PICTURE_FOLDER):

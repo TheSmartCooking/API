@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from flask import Blueprint, jsonify, request
 from pymysql import MySQLError
 
-from db import get_db_connection
+from db import database_cursor, get_db_connection
 from jwt_helper import (
     TokenError,
     extract_token_from_header,
@@ -42,6 +42,27 @@ def validate_password(password):
     )
 
 
+def get_person_by_email(email):
+    with database_cursor() as cursor:
+        cursor.callproc("login_person", (email,))
+        return cursor.fetchone()
+
+
+def verify_password(password, stored_password, salt):
+    seasoned_password = password.encode("utf-8") + salt + PEPPER
+    try:
+        return ph.verify(stored_password, seasoned_password)
+    except exceptions.VerifyMismatchError:
+        return False
+
+
+def update_last_login(person_id):
+    db = get_db_connection()
+    with database_cursor() as cursor:
+        cursor.callproc("update_last_login", (person_id,))
+        db.commit()
+
+
 @authentication_blueprint.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
@@ -59,7 +80,7 @@ def register():
     hashed_password, salt = hash_password_with_salt_and_pepper(password)
 
     db = get_db_connection()
-    with db.cursor() as cursor:
+    with database_cursor() as cursor:
         try:
             cursor.callproc(
                 "register_person", (name, email, hashed_password, salt, language_code)
@@ -74,7 +95,6 @@ def register():
             else:
                 return jsonify(message="An error occurred during registration"), 500
 
-    db.close()
     return jsonify(message="User created successfully"), 201
 
 
@@ -87,30 +107,26 @@ def login():
     if not email or not password:
         return jsonify(message="Email and password are required"), 400
 
-    db = get_db_connection()
-    with db.cursor() as cursor:
-        cursor.callproc("login_person", (email,))
-        person = cursor.fetchone()
+    person = get_person_by_email(email)
 
-        if not person:
+    try:
+        if not person or not verify_password(
+            password, person["hashed_password"], person["salt"]
+        ):
             return jsonify(message="Invalid credentials"), 401
+    except Exception as e:
+        return jsonify(message="An error occurred", error=str(e)), 500
 
-        person_id = person["person_id"]
-        stored_password = person["hashed_password"]
-        salt = person["salt"]
-        seasoned_password = password.encode("utf-8") + salt + PEPPER
+    person_id = person["person_id"]
+    access_token = generate_access_token(person_id)
+    refresh_token = generate_refresh_token(person_id)
+    update_last_login(person_id)
 
-        try:
-            ph.verify(stored_password, seasoned_password)
-            access_token = generate_access_token(person_id)
-            refresh_token = generate_refresh_token(person_id)
-            return jsonify(
-                message="Login successful",
-                access_token=access_token,
-                refresh_token=refresh_token,
-            )
-        except exceptions.VerifyMismatchError:
-            return jsonify(message="Invalid credentials"), 401
+    return jsonify(
+        message="Login successful",
+        access_token=access_token,
+        refresh_token=refresh_token,
+    )
 
 
 @authentication_blueprint.route("/refresh", methods=["POST"])

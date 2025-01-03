@@ -20,5 +20,8 @@ def database_cursor():
     try:
         yield db.cursor()
         db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
     finally:
         db.close()

@@ -77,10 +77,8 @@ def upload_picture():
         case _:
             return jsonify({"error": f"Invalid picture type: {picture_type}"}), 400
 
-    db = get_db_connection()
     with database_cursor() as cursor:
         cursor.callproc(procedure, (hexname, request.person_id))
-        db.commit()
 
     fullpath = os.path.normpath(os.path.join(PICTURE_FOLDER, hexname))
     if not fullpath.startswith(PICTURE_FOLDER):

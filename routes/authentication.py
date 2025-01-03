@@ -57,10 +57,8 @@ def verify_password(password, stored_password, salt):
 
 
 def update_last_login(person_id):
-    db = get_db_connection()
     with database_cursor() as cursor:
         cursor.callproc("update_last_login", (person_id,))
-        db.commit()
 
 
 @authentication_blueprint.route("/register", methods=["POST"])
@@ -79,13 +77,11 @@ def register():
 
     hashed_password, salt = hash_password_with_salt_and_pepper(password)
 
-    db = get_db_connection()
     with database_cursor() as cursor:
         try:
             cursor.callproc(
                 "register_person", (name, email, hashed_password, salt, language_code)
             )
-            db.commit()
         except MySQLError as e:
             # Check for specific error messages in the SQL error
             if "User name already exists" in str(e):

@@ -77,19 +77,18 @@ def register():
 
     hashed_password, salt = hash_password_with_salt_and_pepper(password)
 
-    with database_cursor() as cursor:
-        try:
+    try:
+        with database_cursor() as cursor:
             cursor.callproc(
                 "register_person", (name, email, hashed_password, salt, language_code)
             )
-        except MySQLError as e:
-            # Check for specific error messages in the SQL error
-            if "User name already exists" in str(e):
-                return jsonify(message="User name already exists"), 400
-            elif "Email already exists" in str(e):
-                return jsonify(message="Email already exists"), 400
-            else:
-                return jsonify(message="An error occurred during registration"), 500
+    except MySQLError as e:
+        if "User name already exists" in str(e):
+            return jsonify(message="User name already exists"), 400
+        elif "Email already exists" in str(e):
+            return jsonify(message="Email already exists"), 400
+        else:
+            return jsonify(message="An error occurred during registration"), 500
 
     return jsonify(message="User created successfully"), 201
 

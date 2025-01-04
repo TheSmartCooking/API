@@ -25,6 +25,13 @@ def database_cursor():
         db.close()
 
 
+def extract_error_message(message):
+    try:
+        return message.split(", ")[1].strip("()'")
+    except IndexError:
+        return "An unknown error occurred"
+
+
 def hash_password_with_salt_and_pepper(password: str) -> tuple[str, bytes]:
     salt = os.urandom(16)
     seasoned_password = password.encode("utf-8") + salt + PEPPER

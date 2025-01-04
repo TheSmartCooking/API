@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from config import Config, limiter
 from routes import register_routes
+from utility import extract_error_message
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -50,6 +51,14 @@ def ratelimit_error(e):
             rate_limit=e.description,
         ),
         429,
+    )
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    return (
+        jsonify(error="Internal Server Error", message=extract_error_message(str(e))),
+        500,
     )
 
 

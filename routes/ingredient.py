@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from db import database_cursor
+from utility import database_cursor
 
 ingredient_blueprint = Blueprint("ingredient", __name__)
 

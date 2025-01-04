@@ -1,12 +1,6 @@
-import os
-from re import match
-
-from argon2 import PasswordHasher, exceptions
-from dotenv import load_dotenv
 from flask import Blueprint, jsonify, request
 from pymysql import MySQLError
 
-from db import database_cursor
 from jwt_helper import (
     TokenError,
     extract_token_from_header,
@@ -14,46 +8,20 @@ from jwt_helper import (
     generate_refresh_token,
     verify_token,
 )
-
-load_dotenv()
+from utility import (
+    database_cursor,
+    hash_password_with_salt_and_pepper,
+    validate_password,
+    verify_password,
+)
 
 authentication_blueprint = Blueprint("authentication", __name__)
-ph = PasswordHasher()
-PEPPER = os.getenv("PEPPER", "SuperSecretPepper").encode("utf-8")
 
 
-def hash_password_with_salt_and_pepper(password: str) -> tuple[str, bytes]:
-    salt = os.urandom(16)
-    seasoned_password = password.encode("utf-8") + salt + PEPPER
-    return ph.hash(seasoned_password), salt
-
-
-def validate_password(password):
-    """
-    Validates a password based on the following criteria:
-    - At least 12 characters long.
-    - Contains at least one uppercase letter (A-Z).
-    - Contains at least one lowercase letter (a-z).
-    - Contains at least one digit (0-9).
-    - Contains at least one special character (any non-alphanumeric character).
-    """
-    return bool(
-        match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$", password)
-    )
-
-
-def get_person_by_email(email):
+def login_person_by_email(email):
     with database_cursor() as cursor:
-        cursor.callproc("login_person", (email,))
+        cursor.callproc("login_person_by_email", (email,))
         return cursor.fetchone()
-
-
-def verify_password(password, stored_password, salt):
-    seasoned_password = password.encode("utf-8") + salt + PEPPER
-    try:
-        return ph.verify(stored_password, seasoned_password)
-    except exceptions.VerifyMismatchError:
-        return False
 
 
 def update_last_login(person_id):
@@ -102,7 +70,7 @@ def login():
     if not email or not password:
         return jsonify(message="Email and password are required"), 400
 
-    person = get_person_by_email(email)
+    person = login_person_by_email(email)
 
     try:
         if not person or not verify_password(

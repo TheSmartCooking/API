@@ -45,11 +45,9 @@ def add_common_headers(response):
 def ratelimit_error(e):
     return (
         jsonify(
-            {
-                "error": "Too many requests",
-                "message": "Rate limit exceeded. Please try again later.",
-                "rate_limit": e.description,
-            }
+            error="Too many requests",
+            message="Rate limit exceeded. Please try again later.",
+            rate_limit=e.description,
         ),
         429,
     )

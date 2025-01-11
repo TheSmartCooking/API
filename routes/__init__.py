@@ -5,6 +5,7 @@ from .language import language_blueprint
 from .person import person_blueprint
 from .picture import picture_blueprint
 from .recipe import recipe_blueprint
+from .recipe_engagement import recipe_engagement_blueprint
 
 
 def register_routes(app):
@@ -15,3 +16,4 @@ def register_routes(app):
     app.register_blueprint(person_blueprint, url_prefix="/person")
     app.register_blueprint(picture_blueprint, url_prefix="/picture")
     app.register_blueprint(recipe_blueprint, url_prefix="/recipe")
+    app.register_blueprint(recipe_engagement_blueprint, url_prefix="/recipe_engagement")

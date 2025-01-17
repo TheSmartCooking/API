@@ -24,10 +24,10 @@ def get_all_pictures():
     picture_type = request.args.get("type", None)
 
     with database_cursor() as cursor:
-        cursor.callproc(
-            "get_all_pictures" if picture_type is None else "get_pictures_by_type",
-            (picture_type,),
-        )
+        if picture_type is not None:
+            cursor.callproc("get_pictures_by_type", (picture_type,))
+        else:
+            cursor.callproc("get_all_pictures")
         pictures = cursor.fetchall()
     return jsonify(pictures)
 

@@ -18,6 +18,24 @@ def get_all_recipes():
     return jsonify(recipes)
 
 
+@recipe_blueprint.route("/search", methods=["GET"])
+def get_recipes_by_name():
+    name = request.args.get("name")
+    offset = max(1, request.args.get("page", 1, type=int))
+    limit = max(1, request.args.get("page_size", DEFAULT_PAGE_SIZE, type=int))
+    language_code = request.args.get("language_code", "en")
+
+    if not name:
+        return jsonify(message="Name is required"), 400
+
+    with database_cursor() as cursor:
+        cursor.callproc(
+            "get_recipes_by_name_paginated", (name, limit, offset, language_code)
+        )
+        recipes = cursor.fetchall()
+    return jsonify(recipes)
+
+
 @recipe_blueprint.route("/<int:recipe_id>", methods=["GET"])
 def get_recipe_by_id(recipe_id):
     language_code = request.args.get("language_code", "en")

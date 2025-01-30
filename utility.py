@@ -32,7 +32,7 @@ def extract_error_message(message):
         return "An unknown error occurred"
 
 
-def hash_password_with_salt_and_pepper(password: str) -> tuple[str, bytes]:
+def hash_password(password: str) -> tuple[str, bytes]:
     peppered_password = password.encode("utf-8") + PEPPER
     return ph.hash(peppered_password)  # Argon2 applies salt automatically
 

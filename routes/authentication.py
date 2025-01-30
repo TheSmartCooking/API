@@ -1,6 +1,5 @@
 from argon2 import exceptions
 from flask import Blueprint, jsonify, request
-from flask_limiter import Limiter
 from pymysql import MySQLError
 
 from app import limiter
@@ -14,7 +13,7 @@ from jwt_helper import (
 )
 from utility import (
     database_cursor,
-    hash_password_with_salt_and_pepper,
+    hash_password,
     validate_password,
     verify_password,
 )
@@ -48,7 +47,7 @@ def register():
     if not validate_password(password):
         return jsonify(message="Password does not meet security requirements"), 400
 
-    hashed_password = hash_password_with_salt_and_pepper(password)
+    hashed_password = hash_password(password)
 
     try:
         with database_cursor() as cursor:

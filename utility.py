@@ -2,7 +2,7 @@ import os
 from contextlib import contextmanager
 from re import match
 
-from argon2 import PasswordHasher, exceptions
+from argon2 import PasswordHasher
 from dotenv import load_dotenv
 
 from db import get_db_connection
@@ -32,10 +32,9 @@ def extract_error_message(message):
         return "An unknown error occurred"
 
 
-def hash_password_with_salt_and_pepper(password: str) -> tuple[str, bytes]:
-    salt = os.urandom(16)
-    seasoned_password = password.encode("utf-8") + salt + PEPPER
-    return ph.hash(seasoned_password), salt
+def hash_password(password: str) -> tuple[str, bytes]:
+    peppered_password = password.encode("utf-8") + PEPPER
+    return ph.hash(peppered_password)  # Argon2 applies salt automatically
 
 
 def validate_password(password):
@@ -52,9 +51,6 @@ def validate_password(password):
     )
 
 
-def verify_password(password, stored_password, salt):
-    seasoned_password = password.encode("utf-8") + salt + PEPPER
-    try:
-        return ph.verify(stored_password, seasoned_password)
-    except exceptions.VerifyMismatchError:
-        return False
+def verify_password(password, stored_password):
+    peppered_password = password.encode("utf-8") + PEPPER
+    return ph.verify(stored_password, peppered_password)

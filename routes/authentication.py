@@ -1,5 +1,8 @@
+from argon2 import exceptions
 from flask import Blueprint, jsonify, request
 from pymysql import MySQLError
+
+from config import limiter
 
 from jwt_helper import (
     TokenError,
@@ -10,7 +13,7 @@ from jwt_helper import (
 )
 from utility import (
     database_cursor,
-    hash_password_with_salt_and_pepper,
+    hash_password,
     validate_password,
     verify_password,
 )
@@ -30,6 +33,7 @@ def update_last_login(person_id):
 
 
 @authentication_blueprint.route("/register", methods=["POST"])
+@limiter.limit("5 per minute")
 def register():
     data = request.get_json()
     name = data.get("username")
@@ -43,12 +47,12 @@ def register():
     if not validate_password(password):
         return jsonify(message="Password does not meet security requirements"), 400
 
-    hashed_password, salt = hash_password_with_salt_and_pepper(password)
+    hashed_password = hash_password(password)
 
     try:
         with database_cursor() as cursor:
             cursor.callproc(
-                "register_person", (name, email, hashed_password, salt, language_code)
+                "register_person", (name, email, hashed_password, language_code)
             )
     except MySQLError as e:
         if "User name already exists" in str(e):
@@ -62,6 +66,7 @@ def register():
 
 
 @authentication_blueprint.route("/login", methods=["POST"])
+@limiter.limit("10 per minute")
 def login():
     data = request.get_json()
     email = data.get("email")
@@ -72,11 +77,13 @@ def login():
 
     person = login_person_by_email(email)
 
+    if not person:
+        return jsonify(message="Invalid credentials"), 401
+
     try:
-        if not person or not verify_password(
-            password, person["hashed_password"], person["salt"]
-        ):
-            return jsonify(message="Invalid credentials"), 401
+        verify_password(password, person["hashed_password"])
+    except exceptions.VerifyMismatchError:
+        return jsonify(message="Invalid credentials"), 401
     except Exception:
         return jsonify(message="An internal error occurred"), 500
 
@@ -93,6 +100,7 @@ def login():
 
 
 @authentication_blueprint.route("/refresh", methods=["POST"])
+@limiter.limit("5 per hour")
 def refresh_token():
     try:
         token = extract_token_from_header()

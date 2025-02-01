@@ -1,8 +1,9 @@
+from argon2 import exceptions
 from flask import Blueprint, jsonify, request
 
 from utility import (
     database_cursor,
-    hash_password_with_salt_and_pepper,
+    hash_password,
     validate_password,
     verify_password,
 )
@@ -16,11 +17,11 @@ def login_person_by_id(person_id):
         return cursor.fetchone()
 
 
-def update_person_in_db(person_id, name, email, hashed_password, salt, locale_code):
+def update_person_in_db(person_id, name, email, hashed_password, locale_code):
     with database_cursor() as cursor:
         cursor.callproc(
             "update_person",
-            (person_id, name, email, hashed_password, salt, locale_code),
+            (person_id, name, email, hashed_password, locale_code),
         )
 
 
@@ -52,15 +53,20 @@ def update_person(person_id):
     if new_password and not validate_password(new_password):
         return jsonify(message="Password does not meet security requirements"), 400
 
-    hashed_password, salt = None, None
+    hashed_password = None
     if new_password:
         person = login_person_by_id(person_id)
-        if not person or not verify_password(
-            current_password, person["hashed_password"], person["salt"]
-        ):
+        if not person:
             return jsonify(message="Invalid credentials"), 401
 
-        hashed_password, salt = hash_password_with_salt_and_pepper(new_password)
+        try:
+            verify_password(current_password, person["hashed_password"])
+        except exceptions.VerifyMismatchError:
+            return jsonify(message="Invalid credentials"), 401
+        except Exception:
+            return jsonify(message="An unknown error occurred"), 500
 
-    update_person_in_db(person_id, name, email, hashed_password, salt, locale_code)
+        hashed_password = hash_password(new_password)
+
+    update_person_in_db(person_id, name, email, hashed_password, locale_code)
     return jsonify(message="Person updated successfully"), 200

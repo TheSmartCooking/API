@@ -128,4 +128,4 @@ def add_recipe():
         import traceback
 
         traceback.print_exc()
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": f"An error occurred"}), 500

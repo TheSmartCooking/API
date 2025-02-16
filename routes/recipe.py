@@ -128,4 +128,4 @@ def add_recipe():
         import traceback
 
         traceback.print_exc()
-        return jsonify({"error": f"An internal error has occurred!"}), 500
+        return jsonify({"error": "An internal error has occurred!"}), 500

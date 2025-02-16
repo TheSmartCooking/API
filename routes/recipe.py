@@ -124,8 +124,5 @@ def add_recipe():
 
             return jsonify({"message": "Recipe added successfully"}), 201
 
-    except Exception as e:
-        import traceback
-
-        traceback.print_exc()
+    except Exception:
         return jsonify({"error": "An internal error has occurred!"}), 500

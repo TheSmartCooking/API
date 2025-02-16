@@ -15,13 +15,15 @@ PEPPER = os.getenv("PEPPER", "SuperSecretPepper").encode("utf-8")
 @contextmanager
 def database_cursor():
     db = get_db_connection()
+    cursor = db.cursor()
     try:
-        yield db.cursor()
+        yield cursor
         db.commit()
     except Exception as e:
         db.rollback()
         raise e
     finally:
+        cursor.close()
         db.close()
 
 

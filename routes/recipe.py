@@ -68,3 +68,61 @@ def get_recipe_tags(recipe_id):
         cursor.callproc("get_recipe_tags", (recipe_id,))
         tags = cursor.fetchall()
     return jsonify(tags)
+
+
+@recipe_blueprint.route("", methods=["POST"])
+def add_recipe():
+    data = request.json
+
+    # Extract recipe data
+    author_id = data.get("author_id")
+    picture_id = data.get("picture_id", None)
+    cook_time = data.get("cook_time")
+    difficulty_level = data.get("difficulty_level", None)
+    recipe_source = data.get("recipe_source", None)
+    recipe_status = data.get("recipe_status", "draft")
+
+    # Extract translation data
+    language_iso_code = data.get("language_iso_code")
+    title = data.get("title")
+    details = data.get("details")
+    preparation = data.get("preparation")
+    nutritional_information = data.get("nutritional_information", None)
+    video_url = data.get("video_url", None)
+
+    if not all([author_id, cook_time, language_iso_code, title, details, preparation]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    try:
+        with database_cursor() as cursor:
+            cursor.callproc(
+                "insert_recipe",
+                (
+                    author_id,
+                    picture_id,
+                    cook_time,
+                    difficulty_level,
+                    recipe_source,
+                    recipe_status,
+                ),
+            )
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            recipe_id = list(cursor.fetchone().values())[0]
+
+            cursor.callproc(
+                "insert_recipe_translation_by_iso_code",
+                (
+                    recipe_id,
+                    language_iso_code,
+                    title,
+                    details,
+                    preparation,
+                    nutritional_information,
+                    video_url,
+                ),
+            )
+
+            return jsonify({"message": "Recipe added successfully"}), 201
+
+    except Exception:
+        return jsonify({"error": "An internal error has occurred!"}), 500

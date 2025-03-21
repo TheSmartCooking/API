@@ -1,0 +1,18 @@
+{
+    "name": "Smart Cooking API Development Container",
+    "dockerFile": "Dockerfile",
+    "customizations": {
+        "settings": {
+            "terminal.integrated.shell.linux": "/bin/bash"
+        },
+        "vscode": {
+            "extensions": [
+                "ms-python.black-formatter",
+                "ms-python.python",
+                "ms-python.isort"
+            ]
+        }
+    },
+    "postStartCommand": "pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt --break-system-packages",
+    "remoteUser": "vscode"
+}

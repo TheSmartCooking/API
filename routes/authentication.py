@@ -62,6 +62,40 @@ def register():
     return jsonify(message="User created successfully"), 201
 
 
+@authentication_blueprint.route("/login", methods=["POST"])
+@limiter.limit("10 per minute")
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify(message="Email and password are required"), 400
+
+    person = login_person_by_email(email)
+
+    if not person:
+        return jsonify(message="Invalid credentials"), 401
+
+    try:
+        verify_password(password, person["hashed_password"])
+    except exceptions.VerifyMismatchError:
+        return jsonify(message="Invalid credentials"), 401
+    except Exception:
+        return jsonify(message="An internal error occurred"), 500
+
+    person_id = person["person_id"]
+    access_token = generate_access_token(person_id)
+    refresh_token = generate_refresh_token(person_id)
+    update_last_login(person_id)
+
+    return jsonify(
+        message="Login successful",
+        access_token=access_token,
+        refresh_token=refresh_token,
+    )
+
+
 @authentication_blueprint.route("/refresh", methods=["POST"])
 @limiter.limit("5 per hour")
 def refresh_token():

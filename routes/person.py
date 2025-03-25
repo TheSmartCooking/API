@@ -3,9 +3,11 @@ from flask import Blueprint, jsonify, request
 
 from utility import (
     database_cursor,
+    decrypt_email,
     encrypt_email,
     hash_email,
     hash_password,
+    mask_email,
     validate_password,
     verify_password,
 )
@@ -20,8 +22,12 @@ def login_person_by_id(person_id: int) -> dict:
 
 
 def mask_person_email(person: dict) -> None:
-    """TODO: Mask the email address of a person."""
-    pass
+    """Mask the email address of a person."""
+    person["email"] = mask_email(decrypt_email(person["encrypted_email"]))
+
+    # Remove unreadable email address
+    person.pop("encrypted_email")
+    person.pop("hashed_password")
 
 
 def update_person_in_db(person_id, name, email, hashed_password, locale_code):

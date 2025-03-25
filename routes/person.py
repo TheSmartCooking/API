@@ -22,12 +22,21 @@ def login_person_by_id(person_id: int) -> dict:
 
 
 def mask_person_email(person: dict) -> None:
-    """Mask the email address of a person."""
-    person["email"] = mask_email(decrypt_email(person["encrypted_email"]))
+    """Mask the email address of a person safely."""
+    encrypted_email = person.get("encrypted_email")
 
-    # Remove unreadable email address
-    person.pop("encrypted_email")
-    person.pop("hashed_password")
+    if not encrypted_email:
+        person["email"] = "Unknown"
+        return
+
+    try:
+        person["email"] = mask_email(decrypt_email(encrypted_email))
+    except Exception as e:
+        person["email"] = "Decryption Error"
+
+    # Remove unreadable fields
+    person.pop("encrypted_email", None)
+    person.pop("hashed_password", None)
 
 
 def update_person_in_db(person_id, name, email, hashed_password, locale_code):

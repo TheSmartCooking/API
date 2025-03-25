@@ -25,7 +25,7 @@ __all__ = [
 
 load_dotenv()
 ph = PasswordHasher()
-AES_KEY = os.getenv("AES_SECRET_KEY", "SuperSecretAESKey").encode("utf-8")
+AES_KEY = bytes.fromhex(os.getenv("AES_SECRET_KEY", os.urandom(32).hex()))
 PEPPER = os.getenv("PEPPER", "SuperSecretPepper").encode("utf-8")
 
 

@@ -1,4 +1,5 @@
 argon2-cffi>=23.1.0
+cryptography>=44.0.2
 Flask>=3.0.3
 Flask-JWT-Extended>=2.8.0
 Flask-Limiter>=3.7.0

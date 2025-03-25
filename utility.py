@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import os
+import re
 from contextlib import contextmanager
 from re import match
 
@@ -17,6 +18,7 @@ __all__ = [
     "encrypt_email",
     "hash_email",
     "hash_password",
+    "mask_email",
     "validate_password",
     "verify_password",
 ]
@@ -83,6 +85,25 @@ def hash_email(email: str) -> str:
 def hash_password(password: str) -> tuple[str, bytes]:
     peppered_password = password.encode("utf-8") + PEPPER
     return ph.hash(peppered_password)  # Argon2 applies salt automatically
+
+
+def mask_email(email: str) -> str:
+    """Masks the email address to protect user privacy."""
+    match = re.match(r"^([\w.+-]+)@([\w-]+)\.([a-zA-Z]{2,})$", email)
+    if not match:
+        raise ValueError("Invalid email format")
+
+    local_part, domain_name, domain_extension = match.groups()
+
+    # Mask the local part
+    if len(local_part) > 2:
+        local_part = local_part[0] + "*" * (len(local_part) - 2) + local_part[-1]
+
+    # Mask the domain name
+    if len(domain_name) > 2:
+        domain_name = domain_name[0] + "*" * (len(domain_name) - 2) + domain_name[-1]
+
+    return f"{local_part}@{domain_name}.{domain_extension}"
 
 
 def validate_password(password):

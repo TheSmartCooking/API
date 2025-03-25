@@ -3,6 +3,8 @@ from flask import Blueprint, jsonify, request
 
 from utility import (
     database_cursor,
+    encrypt_email,
+    hash_email,
     hash_password,
     validate_password,
     verify_password,
@@ -11,17 +13,24 @@ from utility import (
 person_blueprint = Blueprint("person", __name__)
 
 
-def login_person_by_id(person_id):
+def login_person_by_id(person_id: int) -> dict:
     with database_cursor() as cursor:
         cursor.callproc("login_person_by_id", (person_id,))
         return cursor.fetchone()
 
 
+def mask_person_email(person: dict) -> None:
+    """TODO: Mask the email address of a person."""
+    pass
+
+
 def update_person_in_db(person_id, name, email, hashed_password, locale_code):
+    email = hash_email(email), encrypt_email(email)
+
     with database_cursor() as cursor:
         cursor.callproc(
             "update_person",
-            (person_id, name, email, hashed_password, locale_code),
+            (person_id, name, *email, hashed_password, locale_code),
         )
 
 
@@ -30,6 +39,10 @@ def get_all_persons():
     with database_cursor() as cursor:
         cursor.callproc("get_all_persons")
         persons = cursor.fetchall()
+
+    for person in persons:
+        mask_person_email(person)
+
     return jsonify(persons)
 
 
@@ -38,6 +51,8 @@ def get_person_by_id(person_id):
     with database_cursor() as cursor:
         cursor.callproc("get_person_by_id", (person_id,))
         person = cursor.fetchone()
+
+    mask_person_email(person)
     return jsonify(person)
 
 

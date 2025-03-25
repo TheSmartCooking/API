@@ -14,7 +14,7 @@ from db import get_db_connection
 
 __all__ = [
     "database_cursor",
-    "decrpyt_email",
+    "decrypt_email",
     "encrypt_email",
     "hash_email",
     "hash_password",

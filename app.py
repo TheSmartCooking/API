@@ -1,3 +1,4 @@
+import argparse
 import traceback
 
 from flask import Flask, jsonify, request
@@ -77,4 +78,10 @@ def handle_exception(e):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    parser = argparse.ArgumentParser(description="Run the Flask application.")
+    parser.add_argument(
+        "--debug", action="store_true", help="Run the app in debug mode."
+    )
+    args = parser.parse_args()
+
+    app.run(host="0.0.0.0", port=5000, debug=args.debug)

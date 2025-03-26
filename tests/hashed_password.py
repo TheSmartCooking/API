@@ -40,6 +40,7 @@ def test_verify_empty_password():
 
 
 def test_verify_password_tampered():
+    """Ensure tampered password fails"""
     hashed_password = hash_password("AnotherPass!123")
     tampered_hash = hashed_password[:-5] + "xyz"  # Modify the hash slightly
     with pytest.raises(VerificationError):

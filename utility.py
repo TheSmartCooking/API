@@ -73,7 +73,7 @@ def encrypt_email(email: str) -> str:
 def extract_error_message(message):
     try:
         cleaner_message = message.split(", ")[1].strip("()'")
-        return cleaner_message if not "SQL" in cleaner_message else "Database error"
+        return cleaner_message if "SQL" not in cleaner_message else "Database error"
     except IndexError:
         return "An unknown error occurred"
 

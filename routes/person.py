@@ -31,7 +31,7 @@ def mask_person_email(person: dict) -> None:
 
     try:
         person["email"] = mask_email(decrypt_email(encrypted_email))
-    except Exception as e:
+    except Exception:
         person["email"] = "Decryption Error"
 
     # Remove unreadable fields

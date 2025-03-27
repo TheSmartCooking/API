@@ -10,7 +10,14 @@ from jwt_helper import (
     generate_refresh_token,
     verify_token,
 )
-from utility import *
+from utility import (
+    database_cursor,
+    encrypt_email,
+    hash_email,
+    hash_password,
+    validate_password,
+    verify_password,
+)
 
 authentication_blueprint = Blueprint("authentication", __name__)
 

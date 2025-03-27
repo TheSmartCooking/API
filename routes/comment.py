@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from utility import database_cursor
+from utils import database_cursor
 
 comment_blueprint = Blueprint("comment", __name__)
 

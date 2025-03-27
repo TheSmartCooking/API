@@ -3,7 +3,6 @@ from flask import Blueprint, jsonify, request
 from pymysql import MySQLError
 
 from config import limiter
-
 from jwt_helper import (
     TokenError,
     extract_token_from_header,
@@ -11,12 +10,7 @@ from jwt_helper import (
     generate_refresh_token,
     verify_token,
 )
-from utility import (
-    database_cursor,
-    hash_password,
-    validate_password,
-    verify_password,
-)
+from utils import database_cursor, hash_password, validate_password, verify_password
 
 authentication_blueprint = Blueprint("authentication", __name__)
 

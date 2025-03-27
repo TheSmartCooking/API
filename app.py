@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 from config import Config, limiter
 from routes import register_routes
-from utility import extract_error_message
+from utils import extract_error_message
 
 app = Flask(__name__)
 app.config.from_object(Config)

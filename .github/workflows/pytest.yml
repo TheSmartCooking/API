@@ -8,6 +8,7 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+    - name: List of OS and Python versions to test for
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.x"]

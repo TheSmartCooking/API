@@ -1,0 +1,38 @@
+name: Python package
+
+on:
+  push:
+    null
+    # branches:
+    #   - main
+  pull_request:
+    null
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+      run: pip install -r requirements.txt
+      run: pip test
+
+    - name: Test with pytest
+      run: |
+        pip install pytest pytest-cov
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          python -m pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        else
+          python3 -m pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        fi

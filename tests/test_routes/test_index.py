@@ -10,9 +10,16 @@ def client():
         yield client
 
 
-def test_index_route(client):
+def test_index_route_status_code(client):
+    """Ensure the index route returns a 200 status code"""
     response = client.get("/")
-    expected_response = '{"data":{"message":"Hello there!"},"success":true}'
-
     assert response.status_code == 200
-    assert response.data.decode("utf-8").strip() == expected_response
+
+
+def test_index_route_json(client):
+    """Ensure the index route returns the correct JSON response"""
+    response = client.get("/")
+    expected_response = {"data": {"message": "Hello there!"}, "success": True}
+
+    assert response.is_json
+    assert response.get_json() == expected_response

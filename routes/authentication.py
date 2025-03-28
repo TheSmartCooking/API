@@ -3,7 +3,6 @@ from flask import Blueprint, jsonify, request
 from pymysql import MySQLError
 
 from config import limiter
-
 from jwt_helper import (
     TokenError,
     extract_token_from_header,
@@ -13,6 +12,8 @@ from jwt_helper import (
 )
 from utility import (
     database_cursor,
+    encrypt_email,
+    hash_email,
     hash_password,
     validate_password,
     verify_password,
@@ -22,8 +23,10 @@ authentication_blueprint = Blueprint("authentication", __name__)
 
 
 def login_person_by_email(email):
+    email_hash = hash_email(email)
+
     with database_cursor() as cursor:
-        cursor.callproc("login_person_by_email", (email,))
+        cursor.callproc("login_person_by_email", (email_hash,))
         return cursor.fetchone()
 
 
@@ -48,11 +51,12 @@ def register():
         return jsonify(message="Password does not meet security requirements"), 400
 
     hashed_password = hash_password(password)
+    email = hash_email(email), encrypt_email(email)
 
     try:
         with database_cursor() as cursor:
             cursor.callproc(
-                "register_person", (name, email, hashed_password, language_code)
+                "register_person", (name, *email, hashed_password, language_code)
             )
     except MySQLError as e:
         if "User name already exists" in str(e):

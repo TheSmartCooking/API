@@ -1,4 +1,7 @@
-from flask import Flask, jsonify
+import argparse
+import traceback
+
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from config import Config, limiter
@@ -56,11 +59,29 @@ def ratelimit_error(e):
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    return (
-        jsonify(error="Internal Server Error", message=extract_error_message(str(e))),
-        500,
-    )
+    # If the app is in debug mode, return the full traceback
+    if app.debug:
+        return (
+            jsonify(
+                error="Internal Server Error",
+                message=str(e),
+                type=type(e).__name__,
+                url=request.url,
+                traceback=traceback.format_exc().splitlines(),
+            ),
+            500,
+        )
+
+    # Otherwise, return a more user-friendly error message
+    error_message = extract_error_message(str(e))
+    return jsonify(error="Internal Server Error", message=error_message), 500
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    parser = argparse.ArgumentParser(description="Run the Flask application.")
+    parser.add_argument(
+        "--debug", action="store_true", help="Run the app in debug mode."
+    )
+    args = parser.parse_args()
+
+    app.run(host="0.0.0.0", port=5000, debug=args.debug)

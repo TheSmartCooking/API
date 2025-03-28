@@ -104,7 +104,7 @@ def validate_email(email: str) -> bool:
     - A valid domain part (alphanumeric, '-', and '.' for subdomains)
     - A valid top-level domain (2 or more alphabetic characters)
     """
-    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$"
     return bool(match(pattern, email))
 
 

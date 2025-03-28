@@ -18,5 +18,13 @@
     "isort.args": [
         "--profile",
         "black"
-    ]
+    ],
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "tests/**/test_*.py",
+                "cmd": "python3 -m pytest '${fileBasename}' -v"
+            }
+        ]
+    }
 }

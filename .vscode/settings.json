@@ -26,6 +26,11 @@
     "emeraldwalk.runonsave": {
         "commands": [
             {
+                "match": ".*",
+                "cmd": "git fetch --prune",
+                "autoShowOutputPanel": "error"
+            },
+            {
                 "match": "tests[/\\\\](.*[/\\\\])?test_.*\\.py$",
                 "cmd": "python3 -m pytest '${relativeFile}' -v",
                 "autoShowOutputPanel": "error"

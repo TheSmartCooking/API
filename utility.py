@@ -60,6 +60,7 @@ def encrypt_email(email: str) -> str:
 
 
 def extract_error_message(message):
+    """Extracts a user-friendly error message from a database error message."""
     try:
         cleaner_message = message.split(", ")[1].strip("()'")
         return cleaner_message if "SQL" not in cleaner_message else "Database error"

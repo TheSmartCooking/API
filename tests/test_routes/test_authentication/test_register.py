@@ -20,8 +20,34 @@ def client(app: Flask):
         yield client
 
 
-def test_missing_fields(client: FlaskClient):
-    """Test registration with missing fields"""
+def test_missing_username(client: FlaskClient):
+    """Test registration with missing username"""
+    data = {
+        "username": "",  # Missing username
+        "email": "newuser@example.com",
+        "password": "",  # Missing password
+    }
+    response = client.post("/register", json=data)
+
+    assert response.status_code == 400
+    assert response.json["message"] == "Username, email, and password are required"
+
+
+def test_missing_email(client: FlaskClient):
+    """Test registration with missing email"""
+    data = {
+        "username": "newuser",
+        "email": "",  # Missing email
+        "password": "Passw0rd123!",
+    }
+    response = client.post("/register", json=data)
+
+    assert response.status_code == 400
+    assert response.json["message"] == "Username, email, and password are required"
+
+
+def test_missing_password(client: FlaskClient):
+    """Test registration with missing password"""
     data = {
         "username": "newuser",
         "email": "newuser@example.com",

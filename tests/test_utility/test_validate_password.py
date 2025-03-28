@@ -1,7 +1,7 @@
 import pytest
 from argon2 import PasswordHasher
 
-from utils import validate_password
+from utility import validate_password
 
 ph = PasswordHasher()
 

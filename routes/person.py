@@ -1,7 +1,7 @@
 from argon2 import exceptions
 from flask import Blueprint, jsonify, request
 
-from utils import *
+from utility import *
 
 person_blueprint = Blueprint("person", __name__)
 

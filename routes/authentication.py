@@ -10,7 +10,7 @@ from jwt_helper import (
     generate_refresh_token,
     verify_token,
 )
-from utils import (
+from utility import (
     database_cursor,
     encrypt_email,
     hash_email,

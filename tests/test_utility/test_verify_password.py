@@ -2,7 +2,7 @@ import pytest
 from argon2 import PasswordHasher
 from argon2.exceptions import VerificationError, VerifyMismatchError
 
-from utils import hash_password, verify_password
+from utility import hash_password, verify_password
 
 ph = PasswordHasher()
 

@@ -18,9 +18,18 @@ def test_valid_emails():
 def test_invalid_emails():
     """Ensure invalid emails fail"""
     assert validate_email("plainaddress") is False
+    assert validate_email("@") is False
+    assert validate_email("@.com") is False
     assert validate_email("@missingusername.com") is False
     assert validate_email("username@.com") is False
     assert validate_email("username@domain..com") is False
     assert validate_email("username@domain.c") is False
     assert validate_email("username@domain.c@om") is False
     assert validate_email("username@domain.c#om") is False
+
+
+def test_empty_email():
+    """Ensure empty email fails"""
+    assert validate_email("") is False
+    assert validate_email(" ") is False
+    assert validate_email("  ") is False

@@ -12,17 +12,6 @@ from dotenv import load_dotenv
 
 from db import get_db_connection
 
-__all__ = [
-    "database_cursor",
-    "decrypt_email",
-    "encrypt_email",
-    "hash_email",
-    "hash_password",
-    "mask_email",
-    "validate_password",
-    "verify_password",
-]
-
 load_dotenv()
 ph = PasswordHasher()
 AES_KEY = bytes.fromhex(os.getenv("AES_SECRET_KEY", os.urandom(32).hex()))
@@ -107,7 +96,19 @@ def mask_email(email: str) -> str:
     return f"{local_part}@{domain_name}.{domain_extension}"
 
 
-def validate_password(password):
+def validate_email(email: str) -> bool:
+    """
+    Validates an email address using a regex pattern.
+    The pattern checks for:
+    - A valid local part (alphanumeric, '.', '_', '+', '-')
+    - A valid domain part (alphanumeric, '-', and '.' for subdomains)
+    - A valid top-level domain (2 or more alphabetic characters)
+    """
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(match(pattern, email))
+
+
+def validate_password(password) -> bool:
     """
     Validates a password based on the following criteria:
     - At least 12 characters long.
@@ -116,9 +117,8 @@ def validate_password(password):
     - Contains at least one digit (0-9).
     - Contains at least one special character (any non-alphanumeric character).
     """
-    return bool(
-        match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$", password)
-    )
+    pattern = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$"
+    return bool(match(pattern, password))
 
 
 def verify_password(password, stored_password):

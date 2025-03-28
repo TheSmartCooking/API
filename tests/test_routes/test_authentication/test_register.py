@@ -31,3 +31,16 @@ def test_missing_fields(client: FlaskClient):
 
     assert response.status_code == 400
     assert response.json["message"] == "Username, email, and password are required"
+
+
+def test_invalid_email(client: FlaskClient):
+    """Test registration with an invalid email format"""
+    data = {
+        "username": "newuser",
+        "email": "invalid-email",  # Invalid email format
+        "password": "Passw0rd123!",
+    }
+    response = client.post("/register", json=data)
+
+    assert response.status_code == 400
+    assert response.json["message"] == "Invalid email address"

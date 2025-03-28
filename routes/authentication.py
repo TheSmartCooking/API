@@ -15,6 +15,7 @@ from utility import (
     encrypt_email,
     hash_email,
     hash_password,
+    validate_email,
     validate_password,
     verify_password,
 )
@@ -46,6 +47,9 @@ def register():
 
     if not name or not email or not password:
         return jsonify(message="Username, email, and password are required"), 400
+
+    if not validate_email(email):
+        return jsonify(message="Invalid email address"), 400
 
     if not validate_password(password):
         return jsonify(message="Password does not meet security requirements"), 400

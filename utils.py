@@ -12,6 +12,17 @@ from dotenv import load_dotenv
 
 from db import get_db_connection
 
+__all__ = [
+    "database_cursor",
+    "decrypt_email",
+    "encrypt_email",
+    "hash_email",
+    "hash_password",
+    "mask_email",
+    "validate_password",
+    "verify_password",
+]
+
 load_dotenv()
 ph = PasswordHasher()
 AES_KEY = bytes.fromhex(os.getenv("AES_SECRET_KEY", os.urandom(32).hex()))

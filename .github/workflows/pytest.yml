@@ -2,11 +2,9 @@ name: Python package
 
 on:
   push:
-    null
-    # branches:
-    #   - main
+    branches:
+      - main
   pull_request:
-    null
 
 jobs:
   test:
@@ -31,11 +29,10 @@ jobs:
         pip install -r requirements.txt
         pip install pytest pytest-cov
 
-    - matrix:
-      os:
-        - ubuntu-latest
-        - macos-latest
+    - name: Run Pytest (Linux/macOS)
+      if: runner.os != 'Windows'
       run: python -m pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
-    - matrix.os: windows-latest
+    - name: Run Pytest (Windows)
+      if: runner.os == 'Windows'
       run: python -m pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html

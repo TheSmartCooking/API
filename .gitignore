@@ -2,7 +2,7 @@
 *.pem
 
 # Upload folder
-images/
+pictures/
 
 # Environment variables file
 .env

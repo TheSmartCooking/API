@@ -20,25 +20,27 @@ def client(app: Flask):
         yield client
 
 
-def test_missing_username(client: FlaskClient):
-    """Test registration with missing username"""
-    data = {
-        "username": "",  # Missing username
-        "email": "newuser@example.com",
-        "password": "",  # Missing password
-    }
-    response = client.post("/register", json=data)
-
-    assert response.status_code == 400
-    assert response.json["message"] == "Username, email, and password are required"
+@pytest.fixture
+def sample_email():
+    return "sample.email@example.com"
 
 
-def test_missing_email(client: FlaskClient):
+@pytest.fixture
+def sample_password():
+    return "SecurePass123!"
+
+
+@pytest.fixture
+def sample_username():
+    return "sampleuser"
+
+
+def test_missing_email(client: FlaskClient, sample_username, sample_password):
     """Test registration with missing email"""
     data = {
-        "username": "newuser",
+        "username": sample_username,
         "email": "",  # Missing email
-        "password": "Passw0rd123!",
+        "password": sample_password,
     }
     response = client.post("/register", json=data)
 
@@ -46,11 +48,11 @@ def test_missing_email(client: FlaskClient):
     assert response.json["message"] == "Username, email, and password are required"
 
 
-def test_missing_password(client: FlaskClient):
+def test_missing_password(client: FlaskClient, sample_username, sample_email):
     """Test registration with missing password"""
     data = {
-        "username": "newuser",
-        "email": "newuser@example.com",
+        "username": sample_username,
+        "email": sample_email,
         "password": "",  # Missing password
     }
     response = client.post("/register", json=data)
@@ -59,12 +61,25 @@ def test_missing_password(client: FlaskClient):
     assert response.json["message"] == "Username, email, and password are required"
 
 
-def test_invalid_email(client: FlaskClient):
+def test_missing_username(client: FlaskClient, sample_username, sample_email):
+    """Test registration with missing username"""
+    data = {
+        "username": sample_username,  # Missing username
+        "email": sample_email,
+        "password": "",  # Missing password
+    }
+    response = client.post("/register", json=data)
+
+    assert response.status_code == 400
+    assert response.json["message"] == "Username, email, and password are required"
+
+
+def test_invalid_email(client: FlaskClient, sample_username, sample_password):
     """Test registration with an invalid email format"""
     data = {
-        "username": "newuser",
+        "username": sample_username,
         "email": "invalid-email",  # Invalid email format
-        "password": "Passw0rd123!",
+        "password": sample_password,
     }
     response = client.post("/register", json=data)
 

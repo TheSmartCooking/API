@@ -20,11 +20,26 @@ def client(app: Flask):
         yield client
 
 
-def test_missing_username(client: FlaskClient):
+@pytest.fixture
+def sample_email():
+    return "sample.email@example.com"
+
+
+@pytest.fixture
+def sample_password():
+    return "SecurePass123!"
+
+
+@pytest.fixture
+def sample_username():
+    return "sampleuser"
+
+
+def test_missing_username(client: FlaskClient, sample_password):
     """Test login with missing username"""
     data = {
         "username": "",  # Missing username
-        "password": "Passw0rd123!",
+        "password": sample_password,
     }
     response = client.post("/login", json=data)
 
@@ -32,10 +47,10 @@ def test_missing_username(client: FlaskClient):
     assert response.json["message"] == "Email and password are required"
 
 
-def test_missing_password(client: FlaskClient):
+def test_missing_password(client: FlaskClient, sample_username):
     """Test login with missing password"""
     data = {
-        "username": "existinguser",
+        "username": sample_username,
         "password": "",  # Missing password
     }
     response = client.post("/login", json=data)

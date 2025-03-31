@@ -4,12 +4,7 @@ import jwt
 import pytest
 from flask import Flask
 
-from jwt_helper import (
-    JWT_SECRET_KEY,
-    TokenError,
-    extract_token_from_header,
-    verify_token,
-)
+from jwt_helper import JWT_SECRET_KEY, TokenError, verify_token
 
 app = Flask(__name__)
 

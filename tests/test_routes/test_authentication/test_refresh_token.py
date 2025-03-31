@@ -2,11 +2,9 @@ import datetime
 
 import jwt
 import pytest
-from flask import Flask
 from flask.testing import FlaskClient
 
 from jwt_helper import JWT_SECRET_KEY, generate_access_token, generate_refresh_token
-from routes.authentication import authentication_blueprint
 
 
 @pytest.fixture

@@ -15,17 +15,33 @@ def test_generate_access_token_type(sample_access_token):
     assert isinstance(sample_access_token, str)
 
 
-def test_generate_access_token_todo():
-    # Decode the token to verify its contents
+def test_generate_access_token_decoded(sample_person_id, sample_access_token):
+    """
+    Ensure the generated access token can be decoded and contains the correct payload
+    - Check if the payload contains the correct person ID
+    - Check if the token has an expiration time
+    - Check if the token type is 'access'
+    """
     decoded_payload = jwt.decode(
         sample_access_token, JWT_SECRET_KEY, algorithms=["HS256"]
     )
 
-    # Check if the payload contains the correct person ID
     assert decoded_payload["person_id"] == sample_person_id
-
-    # Check if the token has an expiration time
     assert "exp" in decoded_payload
-
-    # Check if the token type is 'access'
     assert decoded_payload["token_type"] == "access"
+
+
+def test_generate_access_token_expiration(sample_access_token):
+    """
+    Ensure the generated access token has a valid expiration time
+    - Check if the expiration time is greater than 0
+    - Check if the expiration time is greater than the issued at time
+    - Check if the token is not expired
+    """
+    decoded_payload = jwt.decode(
+        sample_access_token, JWT_SECRET_KEY, algorithms=["HS256"]
+    )
+
+    assert decoded_payload["exp"] > 0
+    assert decoded_payload["exp"] > decoded_payload["iat"]
+    assert decoded_payload["exp"] > JWT_ACCESS_TOKEN_EXPIRY.total_seconds()

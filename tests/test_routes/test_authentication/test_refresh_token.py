@@ -33,14 +33,14 @@ def sample_expired_token(sample_person_id) -> str:
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
 
 
-def test_refresh_token_success(client, sample_refresh_token, sample_person_id):
+def test_refresh_token_success(client, sample_refresh_token, sample_access_token):
     """Test the refresh token endpoint with a valid token"""
     headers = {"Authorization": f"Bearer {sample_refresh_token}"}
     response = client.post("/refresh", headers=headers)
 
     assert response.status_code == 200
     assert "access_token" in response.json
-    assert response.json["access_token"] == generate_access_token(sample_person_id)
+    assert response.json["access_token"] == sample_access_token
 
 
 def test_refresh_token_invalid_token(client: FlaskClient):

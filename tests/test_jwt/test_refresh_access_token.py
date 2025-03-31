@@ -10,12 +10,12 @@ def sample_refresh_token(sample_person_id):
     return generate_refresh_token(sample_person_id)
 
 
-def test_generate_refresh_token_type(sample_refresh_token):
+def test_refresh_token_type(sample_refresh_token):
     """Ensure generate_refresh_token returns a string"""
     assert isinstance(sample_refresh_token, str)
 
 
-def test_generate_refresh_token_decoded(sample_person_id, sample_refresh_token):
+def test_decoded_refresh_token_decoded(sample_person_id, sample_refresh_token):
     """
     Ensure the generated refresh token can be decoded and contains the correct payload
     - Check if the payload contains the correct person ID
@@ -31,7 +31,7 @@ def test_generate_refresh_token_decoded(sample_person_id, sample_refresh_token):
     assert decoded_payload["token_type"] == "refresh"
 
 
-def test_generate_refresh_token_expiration(sample_refresh_token):
+def test_refresh_token_expiration(sample_refresh_token):
     """
     Ensure the generated refresh token has a valid expiration time
     - Check if the expiration time is greater than 0

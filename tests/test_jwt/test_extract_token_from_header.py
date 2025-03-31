@@ -6,12 +6,6 @@ from jwt_helper import TokenError, extract_token_from_header
 app = Flask(__name__)
 
 
-@pytest.fixture
-def sample_token():
-    """Provide a sample token for testing"""
-    return "mock_token_123"
-
-
 def test_extract_token_valid(sample_token):
     """Test extracting a valid Bearer token."""
     with app.test_request_context(headers={"Authorization": f"Bearer {sample_token}"}):

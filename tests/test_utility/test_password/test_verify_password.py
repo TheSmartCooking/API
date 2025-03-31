@@ -7,11 +7,6 @@ from utility import hash_password, verify_password
 ph = PasswordHasher()
 
 
-@pytest.fixture
-def sample_password():
-    return "SecurePass123!"
-
-
 def test_verify_password(sample_password):
     """Verify correct password"""
     hashed_password = hash_password(sample_password)

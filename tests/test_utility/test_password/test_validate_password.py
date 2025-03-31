@@ -1,14 +1,8 @@
-import pytest
 from argon2 import PasswordHasher
 
 from utility import validate_password
 
 ph = PasswordHasher()
-
-
-@pytest.fixture
-def sample_password():
-    return "SecurePass123!"
 
 
 def test_valid_passwords():

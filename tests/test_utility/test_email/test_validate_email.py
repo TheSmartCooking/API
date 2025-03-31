@@ -1,11 +1,4 @@
-import pytest
-
 from utility import validate_email
-
-
-@pytest.fixture
-def sample_email():
-    return "sample.email@example.com"
 
 
 def test_valid_emails():

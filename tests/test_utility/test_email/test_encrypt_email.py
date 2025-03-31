@@ -1,11 +1,4 @@
-import pytest
-
 from utility import encrypt_email
-
-
-@pytest.fixture
-def sample_email():
-    return "sample.email@example.com"
 
 
 def test_encrypt_email(sample_email):

@@ -1,11 +1,4 @@
-import pytest
-
 from utility import hash_email
-
-
-@pytest.fixture
-def sample_email():
-    return "sample.email@example.com"
 
 
 def test_hash_email_type(sample_email):

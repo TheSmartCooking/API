@@ -10,22 +10,6 @@ from routes.authentication import authentication_blueprint
 
 
 @pytest.fixture
-def app():
-    """Create and configure a new Flask application instance for testing"""
-    app = Flask(__name__)
-    app.register_blueprint(authentication_blueprint)
-    app.config["TESTING"] = True
-    return app
-
-
-@pytest.fixture
-def client(app: Flask):
-    """Create a test client for the Flask application"""
-    with app.test_client() as client:
-        yield client
-
-
-@pytest.fixture
 def sample_person_id() -> int:
     """Provide a sample person ID for testing"""
     return 12345

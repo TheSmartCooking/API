@@ -4,7 +4,7 @@ import jwt
 import pytest
 from flask.testing import FlaskClient
 
-from jwt_helper import JWT_SECRET_KEY, generate_access_token, generate_refresh_token
+from jwt_helper import JWT_SECRET_KEY, generate_refresh_token
 
 
 @pytest.fixture

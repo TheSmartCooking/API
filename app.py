@@ -3,8 +3,11 @@ import traceback
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 
-from config.settings import Config, limiter
+from config.logging import setup_logging
+from config.ratelimit import limiter
+from config.settings import Config
 from routes import register_routes
 from utility import extract_error_message
 
@@ -12,6 +15,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app)
 limiter.init_app(app)
+logger = setup_logging()
 
 if app.config["TESTING"]:
     limiter.enabled = False
@@ -47,6 +51,9 @@ def add_common_headers(response):
 
 @app.errorhandler(429)
 def ratelimit_error(e):
+    logger.warning(
+        f"Rate limit exceeded: {request.method} {request.path} - {e.description}"
+    )
     return (
         jsonify(
             error="Too many requests",
@@ -59,20 +66,11 @@ def ratelimit_error(e):
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    # If the app is in debug mode, return the full traceback
-    if app.debug:
-        return (
-            jsonify(
-                error="Internal Server Error",
-                message=str(e),
-                type=type(e).__name__,
-                url=request.url,
-                traceback=traceback.format_exc().splitlines(),
-            ),
-            500,
-        )
+    if isinstance(e, HTTPException):
+        return e
 
-    # Otherwise, return a more user-friendly error message
+    trace = traceback.format_exc().splitlines()[-1]
+    logger.exception(f"An unhandled exception occurred: {trace}")
     error_message = extract_error_message(str(e))
     return jsonify(error="Internal Server Error", message=error_message), 500
 
@@ -84,4 +82,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    logger.info("Starting Flask application...")
     app.run(host="0.0.0.0", port=5000, debug=args.debug)

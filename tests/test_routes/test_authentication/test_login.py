@@ -1,10 +1,10 @@
 from flask.testing import FlaskClient
 
 
-def test_missing_username(client: FlaskClient, sample_password):
-    """Test login with missing username"""
+def test_missing_email(client: FlaskClient, sample_password):
+    """Test login with missing email"""
     data = {
-        "username": "",  # Missing username
+        "email": "",  # Missing email
         "password": sample_password,
     }
     response = client.post("/login", json=data)

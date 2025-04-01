@@ -80,8 +80,8 @@ def upload_picture():
     with database_cursor() as cursor:
         cursor.callproc(procedure, (hexname, request.person_id))
 
-    fullpath = os.path.normpath(os.path.join(Config.IMAGES_FOLDER, hexname))
-    if not fullpath.startswith(Config.IMAGES_FOLDER):
+    fullpath = os.path.abspath(os.path.join(Config.IMAGES_FOLDER, hexname))
+    if os.path.commonpath([fullpath, Config.IMAGES_FOLDER]) != Config.IMAGES_FOLDER:
         return jsonify({"error": "Invalid file path"}), 400
     file.save(fullpath)
 

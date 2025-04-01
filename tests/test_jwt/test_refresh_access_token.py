@@ -44,4 +44,4 @@ def test_refresh_token_expiration(sample_refresh_token):
 
     assert decoded_payload["exp"] > 0
     assert decoded_payload["exp"] > decoded_payload["iat"]
-    assert decoded_payload["exp"] > JWT_REFRESH_TOKEN_EXPIRY.total_seconds()
+    assert (decoded_payload["exp"] - decoded_payload["iat"]) > JWT_REFRESH_TOKEN_EXPIRY.total_seconds()

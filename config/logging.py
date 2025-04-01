@@ -16,7 +16,7 @@ def setup_logging():
 
     # Create console handler
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(logging.WARNING)
 
     # Create formatter
     formatter = logging.Formatter(

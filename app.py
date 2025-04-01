@@ -1,4 +1,5 @@
 import argparse
+import time
 import traceback
 
 from flask import Flask, jsonify, request
@@ -30,16 +31,13 @@ def home():
 register_routes(app)
 
 
-# Add a status field to all JSON responses
 @app.after_request
-def add_status(response):
-    if response.is_json:
-        original_data = response.get_json()
-        new_response = {
-            "success": response.status_code in range(200, 300),
-            "data": original_data if original_data != [] else None,
-        }
-        response.set_data(jsonify(new_response).data)
+def log_response(response):
+    sender = request.remote_addr
+    method = request.method
+    path = request.path
+    status_code = response.status_code
+    logger.info(f"{sender}: {method} {path} {status_code}")
     return response
 
 

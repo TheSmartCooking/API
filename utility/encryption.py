@@ -2,35 +2,25 @@ import base64
 import hashlib
 import os
 import re
-from contextlib import contextmanager
-from re import match
 
 from argon2 import PasswordHasher
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from dotenv import load_dotenv
 
-from db import get_db_connection
+__all__ = [
+    "decrypt_email",
+    "encrypt_email",
+    "hash_email",
+    "hash_password",
+    "mask_email",
+    "verify_password",
+]
 
 load_dotenv()
 ph = PasswordHasher()
 AES_KEY = bytes.fromhex(os.getenv("AES_SECRET_KEY", os.urandom(32).hex()))
 PEPPER = os.getenv("PEPPER", "SuperSecretPepper").encode("utf-8")
-
-
-@contextmanager
-def database_cursor():
-    db = get_db_connection()
-    cursor = db.cursor()
-    try:
-        yield cursor
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise e
-    finally:
-        cursor.close()
-        db.close()
 
 
 def decrypt_email(encrypted_email: str) -> str:
@@ -57,15 +47,6 @@ def encrypt_email(email: str) -> str:
 
     # Store IV + ciphertext (Base64 encoded)
     return base64.b64encode(iv + ciphertext).decode()
-
-
-def extract_error_message(message):
-    """Extracts a user-friendly error message from a database error message."""
-    try:
-        cleaner_message = message.split(", ")[1].strip("()'")
-        return cleaner_message if "SQL" not in cleaner_message else "Database error"
-    except IndexError:
-        return "An unknown error occurred"
 
 
 def hash_email(email: str) -> str:
@@ -95,25 +76,6 @@ def mask_email(email: str) -> str:
     masked_domain = ".".join(mask_part(part) for part in domain_parts)
 
     return masked_local + "@" + masked_domain
-
-
-def validate_email(email: str) -> bool:
-    """Validates an email address using a regex pattern."""
-    pattern = r"^[a-zA-Z0-9._+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$"
-    return bool(re.match(pattern, email))
-
-
-def validate_password(password) -> bool:
-    """
-    Validates a password based on the following criteria:
-    - At least 12 characters long.
-    - Contains at least one uppercase letter (A-Z).
-    - Contains at least one lowercase letter (a-z).
-    - Contains at least one digit (0-9).
-    - Contains at least one special character (any non-alphanumeric character).
-    """
-    pattern = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$"
-    return bool(match(pattern, password))
 
 
 def verify_password(password, stored_password):

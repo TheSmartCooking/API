@@ -2,7 +2,7 @@ from argon2 import exceptions
 from flask import Blueprint, jsonify, request
 from pymysql import MySQLError
 
-from config import limiter
+from config.settings import limiter
 from jwt_helper import (
     TokenError,
     extract_token_from_header,

@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, jsonify, request, send_from_directory
 
-from config import Config
+from config.settings import Config
 from jwt_helper import token_required
 from utility import database_cursor
 

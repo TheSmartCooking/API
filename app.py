@@ -4,7 +4,7 @@ import traceback
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from config import Config, limiter
+from config.settings import Config, limiter
 from routes import register_routes
 from utility import extract_error_message
 

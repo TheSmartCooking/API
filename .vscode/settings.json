@@ -5,6 +5,10 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true
+    },
     "[python]": {
         "editor.rulers": [
             88
@@ -18,5 +22,14 @@
     "isort.args": [
         "--profile",
         "black"
-    ]
+    ],
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "tests[/\\\\](.*[/\\\\])?test_.*\\.py$",
+                "cmd": "python3 -m pytest '${relativeFile}' -v",
+                "autoShowOutputPanel": "error"
+            }
+        ]
+    }
 }

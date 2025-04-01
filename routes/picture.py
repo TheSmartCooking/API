@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, jsonify, request, send_from_directory
 
-from config import PICTURE_FOLDER
+from config import Config
 from jwt_helper import token_required
 from utility import database_cursor
 
@@ -50,7 +50,7 @@ def get_pictures_by_author(author_id):
 
 @picture_blueprint.route("/<path:filename>", methods=["GET"])
 def get_picture(filename):
-    return send_from_directory(PICTURE_FOLDER, filename)
+    return send_from_directory(Config.IMAGES_FOLDER, filename)
 
 
 @picture_blueprint.route("", methods=["POST"])
@@ -80,8 +80,8 @@ def upload_picture():
     with database_cursor() as cursor:
         cursor.callproc(procedure, (hexname, request.person_id))
 
-    fullpath = os.path.normpath(os.path.join(PICTURE_FOLDER, hexname))
-    if not fullpath.startswith(PICTURE_FOLDER):
+    fullpath = os.path.abspath(os.path.join(Config.IMAGES_FOLDER, hexname))
+    if os.path.commonpath([fullpath, Config.IMAGES_FOLDER]) != Config.IMAGES_FOLDER:
         return jsonify({"error": "Invalid file path"}), 400
     file.save(fullpath)
 

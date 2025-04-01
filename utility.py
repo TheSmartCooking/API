@@ -60,6 +60,7 @@ def encrypt_email(email: str) -> str:
 
 
 def extract_error_message(message):
+    """Extracts a user-friendly error message from a database error message."""
     try:
         cleaner_message = message.split(", ")[1].strip("()'")
         return cleaner_message if "SQL" not in cleaner_message else "Database error"
@@ -78,25 +79,31 @@ def hash_password(password: str) -> tuple[str, bytes]:
 
 
 def mask_email(email: str) -> str:
-    """Masks the email address to protect user privacy."""
-    match = re.match(r"^([\w.+-]+)@([\w-]+)\.([a-zA-Z]{2,})$", email)
-    if not match:
-        raise ValueError("Invalid email format")
+    local, domain = email.split("@")
+    domain_parts = domain.split(".")
 
-    local_part, domain_name, domain_extension = match.groups()
+    def mask_part(part: str) -> str:
+        if len(part) <= 2:
+            return part
+        return part[0] + "*" * (len(part) - 2) + part[-1]
 
-    # Mask the local part
-    if len(local_part) > 2:
-        local_part = local_part[0] + "*" * (len(local_part) - 2) + local_part[-1]
+    masked_local = re.sub(
+        r"(\w)(\w+)(\w)",
+        lambda m: m.group(1) + "*" * len(m.group(2)) + m.group(3),
+        local,
+    )
+    masked_domain = ".".join(mask_part(part) for part in domain_parts)
 
-    # Mask the domain name
-    if len(domain_name) > 2:
-        domain_name = domain_name[0] + "*" * (len(domain_name) - 2) + domain_name[-1]
-
-    return f"{local_part}@{domain_name}.{domain_extension}"
+    return masked_local + "@" + masked_domain
 
 
-def validate_password(password):
+def validate_email(email: str) -> bool:
+    """Validates an email address using a regex pattern."""
+    pattern = r"^[a-zA-Z0-9._+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$"
+    return bool(re.match(pattern, email))
+
+
+def validate_password(password) -> bool:
     """
     Validates a password based on the following criteria:
     - At least 12 characters long.
@@ -105,9 +112,8 @@ def validate_password(password):
     - Contains at least one digit (0-9).
     - Contains at least one special character (any non-alphanumeric character).
     """
-    return bool(
-        match(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$", password)
-    )
+    pattern = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$"
+    return bool(match(pattern, password))
 
 
 def verify_password(password, stored_password):

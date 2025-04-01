@@ -11,9 +11,7 @@ JWT_REFRESH_TOKEN_EXPIRY = timedelta(days=30)
 
 
 class TokenError(Exception):
-    """
-    Custom exception for token-related errors.
-    """
+    """Custom exception for token-related errors."""
 
     def __init__(self, message, status_code):
         super().__init__(message)
@@ -22,9 +20,7 @@ class TokenError(Exception):
 
 
 def generate_access_token(person_id: int) -> str:
-    """
-    Generate a short-lived JWT access token for a user.
-    """
+    """Generate a short-lived JWT access token for a user."""
     payload = {
         "person_id": person_id,
         "exp": datetime.now(timezone.utc) + JWT_ACCESS_TOKEN_EXPIRY,  # Expiration
@@ -35,9 +31,7 @@ def generate_access_token(person_id: int) -> str:
 
 
 def generate_refresh_token(person_id: int) -> str:
-    """
-    Generate a long-lived refresh token for a user.
-    """
+    """Generate a long-lived refresh token for a user."""
     payload = {
         "person_id": person_id,
         "exp": datetime.now(timezone.utc) + JWT_REFRESH_TOKEN_EXPIRY,
@@ -48,9 +42,7 @@ def generate_refresh_token(person_id: int) -> str:
 
 
 def extract_token_from_header() -> str:
-    """
-    Extract the Bearer token from the Authorization header.
-    """
+    """Extract the Bearer token from the Authorization header."""
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         raise TokenError("Token is missing or improperly formatted", 401)
@@ -58,9 +50,7 @@ def extract_token_from_header() -> str:
 
 
 def verify_token(token: str, required_type: str) -> dict:
-    """
-    Verify and decode a JWT token.
-    """
+    """Verify and decode a JWT token."""
     try:
         decoded = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
         if decoded.get("token_type") != required_type:
@@ -73,9 +63,7 @@ def verify_token(token: str, required_type: str) -> dict:
 
 
 def token_required(f):
-    """
-    Decorator to protect routes by requiring a valid token.
-    """
+    """Decorator to protect routes by requiring a valid token."""
 
     @wraps(f)
     def decorated(*args, **kwargs):

@@ -9,10 +9,11 @@
             "extensions": [
                 "ms-python.black-formatter",
                 "ms-python.python",
-                "ms-python.isort"
+                "ms-python.isort",
+                "emeraldwalk.RunOnSave"
             ]
         }
     },
-    "postStartCommand": "pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt --break-system-packages",
+    "postStartCommand": "pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt --break-system-packages && python3 -m pytest tests",
     "remoteUser": "vscode"
 }

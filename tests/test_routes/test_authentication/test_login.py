@@ -13,10 +13,10 @@ def test_missing_email(client: FlaskClient, sample_password):
     assert response.json["message"] == "Email and password are required"
 
 
-def test_missing_password(client: FlaskClient, sample_username):
+def test_missing_password(client: FlaskClient, sample_email):
     """Test login with missing password"""
     data = {
-        "username": sample_username,
+        "email": sample_email,
         "password": "",  # Missing password
     }
     response = client.post("/login", json=data)

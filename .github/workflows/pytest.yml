@@ -10,7 +10,7 @@ permissions: {}
 
 jobs:
   test:
-    name: Run Pytest on ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    name: Pytest on ${{ matrix.os }} with Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
 
     permissions:

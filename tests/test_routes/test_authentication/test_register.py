@@ -32,7 +32,7 @@ def test_missing_username(client: FlaskClient, sample_email, sample_password):
     data = {
         "username": "",  # Missing username
         "email": sample_email,
-        "password": sample_password,  # Missing password
+        "password": sample_password,
     }
     response = client.post("/register", json=data)
 

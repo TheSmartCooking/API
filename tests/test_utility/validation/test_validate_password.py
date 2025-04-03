@@ -1,6 +1,6 @@
 from argon2 import PasswordHasher
 
-from utility import validate_password
+from utility.validation import validate_password
 
 ph = PasswordHasher()
 

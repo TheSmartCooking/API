@@ -1,4 +1,4 @@
-from utility import decrypt_email, encrypt_email
+from utility.encryption import decrypt_email, encrypt_email
 
 
 def test_decrypt_email_type(sample_email):

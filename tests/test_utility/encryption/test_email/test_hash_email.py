@@ -1,4 +1,4 @@
-from utility import hash_email
+from utility.encryption import hash_email
 
 
 def test_hash_email_type(sample_email):

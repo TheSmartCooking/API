@@ -1,6 +1,6 @@
 from argon2 import PasswordHasher
 
-from utility import hash_password
+from utility.encryption import hash_password
 
 ph = PasswordHasher()
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from utility import database_cursor
+from utility.database import database_cursor
 
 recipe_engagement_blueprint = Blueprint("recipe_engagement", __name__)
 

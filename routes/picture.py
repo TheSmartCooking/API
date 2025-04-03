@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request, send_from_directory
 
 from config.settings import Config
 from jwt_helper import token_required
-from utility import database_cursor
+from utility.database import database_cursor
 
 picture_blueprint = Blueprint("picture", __name__)
 

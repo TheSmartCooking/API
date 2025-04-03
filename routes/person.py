@@ -1,16 +1,16 @@
 from argon2 import exceptions
 from flask import Blueprint, jsonify, request
 
-from utility import (
-    database_cursor,
+from utility.database import database_cursor
+from utility.encryption import (
     decrypt_email,
     encrypt_email,
     hash_email,
     hash_password,
     mask_email,
-    validate_password,
     verify_password,
 )
+from utility.validation import validate_password
 
 person_blueprint = Blueprint("person", __name__)
 

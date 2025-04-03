@@ -1,6 +1,6 @@
 import pytest
 
-from utility import mask_email
+from utility.encryption import mask_email
 
 
 @pytest.mark.parametrize(

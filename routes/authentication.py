@@ -10,15 +10,9 @@ from jwt_helper import (
     generate_refresh_token,
     verify_token,
 )
-from utility import (
-    database_cursor,
-    encrypt_email,
-    hash_email,
-    hash_password,
-    validate_email,
-    validate_password,
-    verify_password,
-)
+from utility.database import database_cursor
+from utility.encryption import encrypt_email, hash_email, hash_password, verify_password
+from utility.validation import validate_email, validate_password
 
 authentication_blueprint = Blueprint("authentication", __name__)
 

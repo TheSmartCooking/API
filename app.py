@@ -1,5 +1,4 @@
 import argparse
-import time
 import traceback
 
 from flask import Flask, jsonify, request

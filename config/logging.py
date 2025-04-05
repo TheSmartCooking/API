@@ -31,6 +31,6 @@ def setup_logging():
     # Add handlers to logger
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
-    logger.info(f"Logging setup complete.")
+    logger.info("Logging setup complete.")
 
     return logger

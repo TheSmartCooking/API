@@ -1,3 +1,6 @@
+# Log files
+*.log
+
 # Ignore all pem files
 *.pem
 

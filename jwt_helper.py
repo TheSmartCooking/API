@@ -1,13 +1,20 @@
-import os
 from datetime import datetime, timedelta, timezone
 from functools import wraps
+from pathlib import Path
 
 import jwt
 from flask import jsonify, request
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "SuperSecretKey")
+PRIVATE_KEY_PATH = Path("keys/private_key.pem")
+PUBLIC_KEY_PATH = Path("keys/public_key.pem")
 JWT_ACCESS_TOKEN_EXPIRY = timedelta(hours=1)
 JWT_REFRESH_TOKEN_EXPIRY = timedelta(days=30)
+
+with open(PRIVATE_KEY_PATH, "rb") as f:
+    PRIVATE_KEY = f.read()
+
+with open(PUBLIC_KEY_PATH, "rb") as f:
+    PUBLIC_KEY = f.read()
 
 
 class TokenError(Exception):
@@ -20,25 +27,24 @@ class TokenError(Exception):
 
 
 def generate_access_token(person_id: int) -> str:
-    """Generate a short-lived JWT access token for a user."""
     payload = {
         "person_id": person_id,
         "exp": datetime.now(timezone.utc) + JWT_ACCESS_TOKEN_EXPIRY,  # Expiration
         "iat": datetime.now(timezone.utc),  # Issued at
         "token_type": "access",
     }
-    return jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
+    return jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
 
 def generate_refresh_token(person_id: int) -> str:
     """Generate a long-lived refresh token for a user."""
     payload = {
         "person_id": person_id,
-        "exp": datetime.now(timezone.utc) + JWT_REFRESH_TOKEN_EXPIRY,
-        "iat": datetime.now(timezone.utc),
+        "exp": datetime.now(timezone.utc) + JWT_REFRESH_TOKEN_EXPIRY,  # Expiration
+        "iat": datetime.now(timezone.utc),  # Issued at
         "token_type": "refresh",
     }
-    return jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
+    return jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
 
 def extract_token_from_header() -> str:
@@ -52,7 +58,7 @@ def extract_token_from_header() -> str:
 def verify_token(token: str, required_type: str) -> dict:
     """Verify and decode a JWT token."""
     try:
-        decoded = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
+        decoded = jwt.decode(token, PUBLIC_KEY, algorithms=["RS256"])
         if decoded.get("token_type") != required_type:
             raise jwt.InvalidTokenError("Invalid token type")
         return decoded

@@ -1,6 +1,7 @@
 import os
 import secrets
 import subprocess
+from datetime import datetime, timezone
 
 from flask import Blueprint, abort, jsonify, request
 
@@ -53,5 +54,9 @@ def rotate_keys():
     # Update active_kid
     with open("keys/active_kid.txt", "w") as f:
         f.write(new_kid)
+
+    # Save the kid creation time for cleanup purposes
+    with open(f"{key_dir}/created_at.txt", "w") as f:
+        f.write(datetime.now(timezone.utc).isoformat())
 
     return jsonify(message=f"KID rotated. New kid: {new_kid}")

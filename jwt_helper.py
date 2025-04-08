@@ -1,20 +1,11 @@
 from datetime import datetime, timedelta, timezone
 from functools import wraps
-from pathlib import Path
 
 import jwt
 from flask import jsonify, request
 
-PRIVATE_KEY_PATH = Path("keys/private_key.pem")
-PUBLIC_KEY_PATH = Path("keys/public_key.pem")
 JWT_ACCESS_TOKEN_EXPIRY = timedelta(hours=1)
 JWT_REFRESH_TOKEN_EXPIRY = timedelta(days=30)
-
-with open(PRIVATE_KEY_PATH, "rb") as f:
-    PRIVATE_KEY = f.read()
-
-with open(PUBLIC_KEY_PATH, "rb") as f:
-    PUBLIC_KEY = f.read()
 
 
 class TokenError(Exception):
@@ -24,9 +15,6 @@ class TokenError(Exception):
         super().__init__(message)
         self.status_code = status_code
         self.message = message
-
-
-import os
 
 
 def get_active_kid():
@@ -55,13 +43,18 @@ def generate_access_token(person_id: int) -> str:
 
 def generate_refresh_token(person_id: int) -> str:
     """Generate a long-lived refresh token for a user."""
+    kid = get_active_kid()
+    private_key = load_private_key(kid)
+
     payload = {
         "person_id": person_id,
         "exp": datetime.now(timezone.utc) + JWT_REFRESH_TOKEN_EXPIRY,  # Expiration
         "iat": datetime.now(timezone.utc),  # Issued at
         "token_type": "refresh",
     }
-    return jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
+    headers = {"kid": kid}
+
+    return jwt.encode(payload, private_key, algorithm="RS256", headers=headers)
 
 
 def extract_token_from_header() -> str:

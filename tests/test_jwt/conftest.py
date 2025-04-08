@@ -1,3 +1,4 @@
+import jwt
 import pytest
 from flask import Flask
 
@@ -27,3 +28,8 @@ def sample_token():
 def sample_access_token(sample_person_id):
     """Provide a sample access token for testing"""
     return generate_access_token(sample_person_id)
+
+
+@pytest.fixture
+def sample_kid(sample_access_token):
+    return jwt.get_unverified_header(sample_access_token).get("kid")

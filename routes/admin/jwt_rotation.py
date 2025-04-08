@@ -10,7 +10,7 @@ from config.ratelimit import limiter
 jwt_rotation_blueprint = Blueprint("jwt_rotation", __name__)
 
 
-@jwt_rotation_blueprint.route("/rotate-keys", methods=["POST"])
+@jwt_rotation_blueprint.route("/rotate", methods=["POST"])
 @limiter.limit("1 per day")
 def rotate_keys():
     """

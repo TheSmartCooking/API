@@ -8,12 +8,6 @@ from jwt_helper import generate_refresh_token, get_active_kid, load_private_key
 
 
 @pytest.fixture
-def sample_person_id() -> int:
-    """Provide a sample person ID for testing"""
-    return 12345
-
-
-@pytest.fixture
 def sample_refresh_token(sample_person_id: int) -> str:
     """Provide a sample refresh token for testing"""
     return generate_refresh_token(sample_person_id)

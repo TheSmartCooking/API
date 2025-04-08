@@ -20,7 +20,6 @@ class Config:
     MYSQL_CURSORCLASS = "DictCursor"
 
     # JWT configuration
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRY = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRY = timedelta(days=30)
 

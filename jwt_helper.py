@@ -26,14 +26,31 @@ class TokenError(Exception):
         self.message = message
 
 
+import os
+
+
+def get_active_kid():
+    with open("keys/active_kid.txt", "r") as f:
+        return f.read().strip()
+
+
+def load_private_key(kid):
+    with open(f"keys/{kid}/private.pem", "rb") as f:
+        return f.read()
+
+
 def generate_access_token(person_id: int) -> str:
+    kid = get_active_kid()
+    private_key = load_private_key(kid)
+
     payload = {
         "person_id": person_id,
         "exp": datetime.now(timezone.utc) + JWT_ACCESS_TOKEN_EXPIRY,  # Expiration
         "iat": datetime.now(timezone.utc),  # Issued at
         "token_type": "access",
     }
-    return jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
+    headers = {"kid": kid}
+    return jwt.encode(payload, private_key, algorithm="RS256", headers=headers)
 
 
 def generate_refresh_token(person_id: int) -> str:
@@ -55,13 +72,29 @@ def extract_token_from_header() -> str:
     return auth_header.split("Bearer ")[1]
 
 
+def load_public_key(kid):
+    try:
+        with open(f"keys/{kid}/public.pem", "rb") as f:
+            return f.read()
+    except FileNotFoundError:
+        raise TokenError("Unknown key ID", 401)
+
+
 def verify_token(token: str, required_type: str) -> dict:
     """Verify and decode a JWT token."""
     try:
-        decoded = jwt.decode(token, PUBLIC_KEY, algorithms=["RS256"])
+        unverified_header = jwt.get_unverified_header(token)
+        kid = unverified_header.get("kid")
+        if not kid:
+            raise TokenError("KID missing in token header", 401)
+
+        public_key = load_public_key(kid)
+
+        decoded = jwt.decode(token, public_key, algorithms=["RS256"])
         if decoded.get("token_type") != required_type:
             raise jwt.InvalidTokenError("Invalid token type")
         return decoded
+
     except jwt.ExpiredSignatureError:
         raise TokenError("Token has expired", 401)
     except jwt.InvalidTokenError:

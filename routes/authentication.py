@@ -1,5 +1,5 @@
 from argon2 import exceptions
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from pymysql import MySQLError
 
 from config.ratelimit import limiter
@@ -62,6 +62,7 @@ def register():
         elif "Email already exists" in str(e):
             return jsonify(message="Email already exists"), 400
         else:
+            current_app.logger.error(f"Database error: {e}")
             return jsonify(message="An error occurred during registration"), 500
 
     return jsonify(message="User created successfully"), 201
@@ -86,7 +87,8 @@ def login():
         verify_password(password, person["hashed_password"])
     except exceptions.VerifyMismatchError:
         return jsonify(message="Invalid credentials"), 401
-    except Exception:
+    except Exception as e:
+        current_app.logger.error(f"Database error: {e}")
         return jsonify(message="An internal error occurred"), 500
 
     person_id = person["person_id"]

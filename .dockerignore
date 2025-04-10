@@ -1,3 +1,6 @@
+# Ignore host log files
+*.log
+
 # Ignore virtual environments
 venv
 __pycache__

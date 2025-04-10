@@ -1,4 +1,5 @@
 # Log files
+logs/
 *.log
 
 # Ignore JWT keys

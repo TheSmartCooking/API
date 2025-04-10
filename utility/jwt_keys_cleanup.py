@@ -6,10 +6,10 @@ Run the script with: `python3 -m utility.jwt_keys_cleanup`
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from jwt_helper import get_active_kid
+from jwt_helper import JWT_REFRESH_TOKEN_EXPIRY, get_active_kid
 
 KEYS_DIR = Path("keys")
-EXPIRY_DAYS = 35
+EXPIRY_DAYS = JWT_REFRESH_TOKEN_EXPIRY.days + 1
 
 
 def cleanup_old_keys():

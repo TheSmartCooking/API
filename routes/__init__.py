@@ -1,4 +1,3 @@
-from .admin import admin_blueprint
 from .authentication import authentication_blueprint
 from .comment import comment_blueprint
 from .ingredient import ingredient_blueprint
@@ -10,7 +9,6 @@ from .recipe_engagement import recipe_engagement_blueprint
 
 
 def register_routes(app):
-    app.register_blueprint(admin_blueprint, url_prefix="/admin")
     app.register_blueprint(authentication_blueprint, url_prefix="/auth")
     app.register_blueprint(comment_blueprint, url_prefix="/comment")
     app.register_blueprint(ingredient_blueprint, url_prefix="/ingredient")

@@ -1,6 +1,6 @@
 import jwt
 
-from jwt_helper import JWT_ACCESS_TOKEN_EXPIRY, load_public_key
+from jwtoken.tokens import JWT_ACCESS_TOKEN_EXPIRY, load_public_key
 
 
 def test_access_token_type(sample_access_token):

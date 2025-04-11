@@ -4,14 +4,14 @@ import jwt
 import pytest
 from flask import Flask
 
-from jwt_helper import (
-    TokenError,
+from jwtoken.exceptions import TokenError
+from jwtoken.tokens import (
     generate_access_token,
     generate_refresh_token,
-    get_active_kid,
     load_private_key,
     verify_token,
 )
+from utility.jwtoken.keys_id import get_active_kid
 
 app = Flask(__name__)
 

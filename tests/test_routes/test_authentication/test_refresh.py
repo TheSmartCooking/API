@@ -4,7 +4,8 @@ import jwt
 import pytest
 from flask.testing import FlaskClient
 
-from jwt_helper import generate_refresh_token, get_active_kid, load_private_key
+from jwtoken.tokens import generate_refresh_token, load_private_key
+from utility.jwtoken.keys_id import get_active_kid
 
 
 @pytest.fixture

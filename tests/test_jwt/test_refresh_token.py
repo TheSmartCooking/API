@@ -1,7 +1,11 @@
 import jwt
 import pytest
 
-from jwt_helper import JWT_REFRESH_TOKEN_EXPIRY, generate_refresh_token, load_public_key
+from jwtoken.tokens import (
+    JWT_REFRESH_TOKEN_EXPIRY,
+    generate_refresh_token,
+    load_public_key,
+)
 
 
 @pytest.fixture

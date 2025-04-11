@@ -16,5 +16,5 @@ else
   echo "✅ Keys already exist. Skipping generation."
 fi
 
-# Start your Python app
+# Start the API
 exec python3 app.py

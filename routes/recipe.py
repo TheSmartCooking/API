@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from config.settings import DEFAULT_PAGE_SIZE
 from utility.database import database_cursor
@@ -124,5 +124,6 @@ def add_recipe():
 
             return jsonify({"message": "Recipe added successfully"}), 201
 
-    except Exception:
+    except Exception as e:
+        current_app.logger.error(f"Error adding recipe: {e}")
         return jsonify({"error": "An internal error has occurred!"}), 500

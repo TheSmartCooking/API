@@ -15,7 +15,13 @@ app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app)
 limiter.init_app(app)
+
+# Set up logging
 logger = setup_logging()
+app.logger.handlers.clear()
+for handler in logger.handlers:
+    app.logger.addHandler(handler)
+app.logger.setLevel(logger.level)
 
 if app.config["TESTING"]:
     limiter.enabled = False

@@ -1,5 +1,5 @@
 from argon2 import exceptions
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from utility.database import database_cursor
 from utility.encryption import (
@@ -93,7 +93,8 @@ def update_person(person_id):
             verify_password(current_password, person["hashed_password"])
         except exceptions.VerifyMismatchError:
             return jsonify(message="Invalid credentials"), 401
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"Error verifying password: {e}")
             return jsonify(message="An unknown error occurred"), 500
 
         hashed_password = hash_password(new_password)

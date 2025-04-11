@@ -1,24 +1,38 @@
 import datetime
 import logging
+import os
+from logging.handlers import TimedRotatingFileHandler
+
+LOGS_DIRECTORY = "logs"
 
 
 def setup_logging():
-    logger = logging.getLogger(__name__)
+    # Create a logger
+    logger = logging.getLogger("Smart_Cooking-API")
     logger.setLevel(logging.DEBUG)
 
-    # Generate filename (YYYY-MM-DD-HH-MM-SS.log)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_filename = f"{timestamp}.log"
+    # Create a file handler that rotates logs daily
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    # Create file handler
-    file_handler = logging.FileHandler(log_filename)
+    # Create a directory for logs if it doesn't exist
+    if not os.path.exists(LOGS_DIRECTORY):
+        os.makedirs(LOGS_DIRECTORY)
+    log_filename = f"{LOGS_DIRECTORY}/{timestamp}.log"
+
+    # Set up timed rotating file handler
+    file_handler = TimedRotatingFileHandler(
+        log_filename,
+        when="midnight",  # Rotate logs every midnight
+        interval=1,  # Every 1 day
+        backupCount=90,  # Keep the last 90 days of logs
+    )
     file_handler.setLevel(logging.DEBUG)
 
     # Create console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.WARNING)
 
-    # Create formatter
+    # Create a formatter
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -31,6 +45,7 @@ def setup_logging():
     # Add handlers to logger
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
+
     logger.info("Logging setup complete.")
 
     return logger

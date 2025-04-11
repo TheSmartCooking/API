@@ -5,7 +5,7 @@ import pytest
 from flask.testing import FlaskClient
 
 from jwtoken.tokens import generate_refresh_token, load_private_key
-from utility.jwtoken.keys_id import get_active_kid
+from utility.jwtoken.common import get_active_kid
 
 
 @pytest.fixture

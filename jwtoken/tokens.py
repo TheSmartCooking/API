@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 
-from utility.jwtoken.keys_id import get_active_kid, load_private_key, load_public_key
+from utility.jwtoken.common import get_active_kid, load_private_key, load_public_key
 
 from .exceptions import TokenError
 

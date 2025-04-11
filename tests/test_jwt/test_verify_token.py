@@ -11,7 +11,7 @@ from jwtoken.tokens import (
     load_private_key,
     verify_token,
 )
-from utility.jwtoken.keys_id import get_active_kid
+from utility.jwtoken.common import get_active_kid
 
 app = Flask(__name__)
 

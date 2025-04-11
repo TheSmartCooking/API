@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from jwtoken.tokens import JWT_REFRESH_TOKEN_EXPIRY
-from utility.jwtoken.keys_id import get_active_kid
+from utility.jwtoken.common import get_active_kid
 
 KEYS_DIR = Path("keys")
 EXPIRY_DAYS = JWT_REFRESH_TOKEN_EXPIRY.days + 1

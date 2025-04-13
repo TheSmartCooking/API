@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from config.jwtoken import (
     ACTIVE_KID_FILE,
     CREATED_AT_FILE,
-    KEY_DIR,
+    KEYS_DIR,
     PRIVATE_KEY_FILE,
     PUBLIC_KEY_FILE,
 )
@@ -18,7 +18,7 @@ from config.jwtoken import (
 
 def rotate_keys():
     new_kid = secrets.token_hex(8)
-    new_key_dir = KEY_DIR / new_kid
+    new_key_dir = KEYS_DIR / new_kid
     new_key_dir.mkdir(parents=True, exist_ok=False)
 
     private_key_path = new_key_dir / PRIVATE_KEY_FILE

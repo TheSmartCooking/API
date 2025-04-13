@@ -11,7 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application files
 COPY . .
-RUN chmod +x /app/entrypoint.sh
 
 # Create a non-root user and set permissions for the /app directory
 RUN adduser --disabled-password --gecos '' apiuser && chown -R apiuser /app
@@ -24,4 +23,4 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl --fail http://localhost:5000/ || exit 1
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["python3", "app.py"]

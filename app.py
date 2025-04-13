@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
+from config.jwtoken import ACTIVE_KID_FILE
 from config.logging import setup_logging
 from config.ratelimit import limiter
 from config.settings import Config
@@ -29,7 +30,7 @@ if app.config["TESTING"]:
     limiter.enabled = False
 
 # Ensure the keys directory and active_kid.txt file exist
-if not os.path.exists("keys/active_kid.txt"):
+if not os.path.exists(ACTIVE_KID_FILE):
     rotate_keys()
 
 

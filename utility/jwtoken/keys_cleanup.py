@@ -1,6 +1,6 @@
 """
 To run this script ensure you're in the root directory of the project.
-Run the script with: `python3 -m utility.jwt_keys_cleanup`
+Run the script with: `python3 -m utility.jwtoken.keys_cleanup`
 """
 
 from datetime import datetime, timedelta, timezone

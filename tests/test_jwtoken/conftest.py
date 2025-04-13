@@ -13,12 +13,6 @@ def client(app: Flask):
 
 
 @pytest.fixture
-def sample_person_id() -> int:
-    """Provide a sample person ID for testing"""
-    return 12345
-
-
-@pytest.fixture
 def sample_token():
     """Provide a sample token for testing"""
     return "mock_token_123"

@@ -2,6 +2,6 @@ import pytest
 
 
 @pytest.fixture
-def sample_person_id() -> int:
+def sample_person_id():
     """Provide a sample person ID for testing"""
-    return 12345
+    return 123456789

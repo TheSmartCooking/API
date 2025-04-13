@@ -53,10 +53,10 @@ def get_picture(filename):
     return send_from_directory(Config.IMAGES_FOLDER, filename)
 
 
-@picture_blueprint.route("", methods=["POST"])
+@picture_blueprint.route("/upload", methods=["POST"])
 @token_required
 def upload_picture():
-    if not request.files:
+    if not request.files or "file" not in request.files:
         return jsonify({"error": "No file provided"}), 400
 
     file = request.files["file"]
@@ -65,24 +65,23 @@ def upload_picture():
     if not is_allowed_file(file.filename):
         return jsonify({"error": "Invalid file"}), 400
 
-    hexname = os.urandom(30).hex() + "." + extract_file_extension(file.filename)
+    hexname = f"{os.urandom(30).hex()}.{extract_file_extension(file.filename)}"
+    fullpath = os.path.join(Config.IMAGES_FOLDER, hexname)
 
-    match picture_type:
-        case "recipe":
-            procedure = "insert_picture_recipe_picture"
-        case "avatar":
-            procedure = "insert_picture_avatar"
-        case "language_icon":
-            procedure = "insert_picture_language_icon"
-        case _:
-            return jsonify({"error": f"Invalid picture type: {picture_type}"}), 400
+    if not fullpath.startswith(os.path.abspath(Config.IMAGES_FOLDER) + os.sep):
+        return jsonify({"error": "Invalid file path"}), 400
+
+    procedures = {
+        "recipe": "insert_picture_recipe_picture",
+        "avatar": "insert_picture_avatar",
+        "language_icon": "insert_picture_language_icon",
+    }
+    procedure = procedures.get(picture_type)
+    if not procedure:
+        return jsonify({"error": f"Invalid picture type: {picture_type}"}), 400
 
     with database_cursor() as cursor:
         cursor.callproc(procedure, (hexname, request.person_id))
-
-    fullpath = os.path.abspath(os.path.join(Config.IMAGES_FOLDER, hexname))
-    if os.path.commonpath([fullpath, Config.IMAGES_FOLDER]) != Config.IMAGES_FOLDER:
-        return jsonify({"error": "Invalid file path"}), 400
     file.save(fullpath)
 
     return jsonify({"picture_path": hexname}), 201

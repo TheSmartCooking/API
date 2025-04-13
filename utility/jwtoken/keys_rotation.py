@@ -1,6 +1,6 @@
 """
 Rotate the keys used for JWT signing.
-Run the script with: `python3 -m utility.jwt_keys_rotation`
+Run the script with: `python3 -m utility.jwtoken.keys_rotation`
 """
 
 import os

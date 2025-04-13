@@ -5,7 +5,7 @@ FROM python:3.13-slim
 WORKDIR /app
 
 # Install dependencies
-RUN apt update && apt install -y openssl
+RUN apt-get update && apt-get install -y --no-install-recommends openssl
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -24,4 +24,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl --fail http://localhost:5000/ || exit 1
 
 # Command to run the app
-CMD python3 -m utility.jwtoken.keys_rotation && python3 app.py
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/start.sh"]

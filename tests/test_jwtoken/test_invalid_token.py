@@ -34,20 +34,22 @@ def public_key(active_kid):
 
 @pytest.fixture
 def sample_payload(sample_person_id):
+    current_time = datetime.now(timezone.utc)
     return {
         "person_id": sample_person_id,
-        "exp": datetime.now(timezone.utc) + timedelta(minutes=10),
-        "iat": datetime.now(timezone.utc),
+        "exp": current_time + timedelta(minutes=10),
+        "iat": current_time,
         "token_type": "access",
     }
 
 
 def test_hs256_forged_token_rejected(sample_person_id, public_key, active_kid):
     headers = {"kid": active_kid, "alg": "HS256"}
+    current_time = datetime.now(timezone.utc)
     payload = {
         "person_id": sample_person_id,
-        "exp": datetime.now(timezone.utc) + timedelta(minutes=10),
-        "iat": datetime.now(timezone.utc),
+        "exp": current_time + timedelta(minutes=10),
+        "iat": current_time,
         "token_type": "access",
     }
 

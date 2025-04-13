@@ -13,7 +13,7 @@ EXPIRY_DAYS = JWT_REFRESH_TOKEN_EXPIRY.days + 1
 
 
 def cleanup_old_keys():
-    now = datetime.now(timezone.utc)
+    current_time = datetime.now(timezone.utc)
     active_kid = get_active_kid()
 
     for kid_dir in KEYS_DIR.iterdir():
@@ -28,7 +28,7 @@ def cleanup_old_keys():
         with open(created_at_file, "r") as f:
             created_at = datetime.fromisoformat(f.read().strip())
 
-        if (now - created_at) > timedelta(days=EXPIRY_DAYS):
+        if (current_time - created_at) > timedelta(days=EXPIRY_DAYS):
             print(f"Deleting expired key: {kid_dir.name}")
             for item in kid_dir.iterdir():
                 item.unlink()

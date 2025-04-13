@@ -38,12 +38,13 @@ def test_verify_token_invalid_type(sample_person_id):
     private_key = load_private_key(kid)
 
     # Create a token with token_type = "invalid"
+    current_time = datetime.now(timezone.utc)
     token = jwt.encode(
         {
             "person_id": sample_person_id,
             "token_type": "invalid",
-            "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
-            "iat": datetime.now(timezone.utc),
+            "exp": current_time + timedelta(minutes=5),
+            "iat": current_time,
         },
         private_key,
         algorithm="RS256",
@@ -60,12 +61,13 @@ def test_verify_expired_token(sample_person_id):
     kid = get_active_kid()
     private_key = load_private_key(kid)
 
+    current_time = datetime.now(timezone.utc)
     expired_token = jwt.encode(
         {
             "person_id": sample_person_id,
             "token_type": "access",
-            "exp": datetime.now(timezone.utc) - timedelta(seconds=1),
-            "iat": datetime.now(timezone.utc) - timedelta(hours=1),
+            "exp": current_time - timedelta(seconds=1),
+            "iat": current_time - timedelta(hours=1),
         },
         private_key,
         algorithm="RS256",

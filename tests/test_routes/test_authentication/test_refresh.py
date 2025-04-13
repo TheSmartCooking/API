@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 
 import jwt
 import pytest
@@ -20,12 +20,11 @@ def sample_expired_token(sample_person_id) -> str:
     kid = get_active_kid()
     private_key = load_private_key(kid)
 
+    current_time = datetime.now(timezone.utc)
     payload = {
         "person_id": sample_person_id,
-        "exp": datetime.datetime.now(datetime.timezone.utc)
-        - datetime.timedelta(seconds=1),  # Already expired
-        "iat": datetime.datetime.now(datetime.timezone.utc)
-        - datetime.timedelta(hours=1),
+        "exp": current_time - timedelta(seconds=1),  # Already expired
+        "iat": current_time - timedelta(hours=1),
         "token_type": "refresh",
     }
 

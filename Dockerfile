@@ -24,4 +24,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl --fail http://localhost:5000/ || exit 1
 
 # Command to run the app
-ENTRYPOINT ["./scripts/entrypoint.sh"]
+CMD python3 -m utility.jwtoken.keys_rotation && python3 app.py

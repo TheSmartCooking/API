@@ -14,10 +14,11 @@ def generate_access_token(person_id: int) -> str:
     kid = get_active_kid()
     private_key = load_private_key(kid)
 
+    current_time = datetime.now(timezone.utc)
     payload = {
         "person_id": person_id,
-        "exp": datetime.now(timezone.utc) + JWT_ACCESS_TOKEN_EXPIRY,  # Expiration
-        "iat": datetime.now(timezone.utc),  # Issued at
+        "exp": current_time + JWT_ACCESS_TOKEN_EXPIRY,  # Expiration
+        "iat": current_time,  # Issued at
         "token_type": "access",
     }
     headers = {"kid": kid}

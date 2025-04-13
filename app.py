@@ -1,4 +1,5 @@
 import argparse
+import os
 import traceback
 
 from flask import Flask, jsonify, request
@@ -10,6 +11,7 @@ from config.ratelimit import limiter
 from config.settings import Config
 from routes import register_routes
 from utility.database import extract_error_message
+from utility.jwtoken.keys_rotation import rotate_keys
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -25,6 +27,10 @@ app.logger.setLevel(logger.level)
 
 if app.config["TESTING"]:
     limiter.enabled = False
+
+# Ensure the keys directory and active_kid.txt file exist
+if not os.path.exists("keys/active_kid.txt"):
+    rotate_keys()
 
 
 @app.route("/")

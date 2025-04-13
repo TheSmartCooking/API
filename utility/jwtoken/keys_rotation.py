@@ -8,12 +8,13 @@ import secrets
 import subprocess
 from datetime import datetime, timezone
 
+from config.jwtoken import ACTIVE_KID_FILE, KEY_DIR, PRIVATE_KEY_FILE, PUBLIC_KEY_FILE
+
 
 def rotate_keys():
-
     new_kid = secrets.token_hex(8)
-    key_dir = f"keys/{new_kid}"
-    os.makedirs(key_dir, exist_ok=False)
+    new_key_dir = f"{KEY_DIR}/{new_kid}"
+    os.makedirs(new_key_dir, exist_ok=False)
 
     # Use OpenSSL to generate keys
     subprocess.run(
@@ -23,7 +24,7 @@ def rotate_keys():
             "-algorithm",
             "RSA",
             "-out",
-            f"{key_dir}/private.pem",
+            f"{new_key_dir}/{PRIVATE_KEY_FILE}",
             "-pkeyopt",
             "rsa_keygen_bits:2048",
         ],
@@ -35,17 +36,17 @@ def rotate_keys():
             "rsa",
             "-pubout",
             "-in",
-            f"{key_dir}/private.pem",
+            f"{new_key_dir}/{PRIVATE_KEY_FILE}",
             "-out",
-            f"{key_dir}/public.pem",
+            f"{new_key_dir}/{PUBLIC_KEY_FILE}",
         ],
         check=True,
     )
 
     # Update active_kid
-    with open("keys/active_kid.txt", "w") as f:
+    with open(ACTIVE_KID_FILE, "w") as f:
         f.write(new_kid)
 
     # Save the kid creation time for cleanup purposes
-    with open(f"{key_dir}/created_at.txt", "w") as f:
+    with open(ACTIVE_KID_FILE, "w") as f:
         f.write(datetime.now(timezone.utc).isoformat())

@@ -4,12 +4,11 @@ Run the script with: `python3 -m utility.jwtoken.keys_cleanup`
 """
 
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
+from config.jwtoken import CREATED_AT_FILE, KEYS_DIR
 from jwtoken.tokens import JWT_REFRESH_TOKEN_EXPIRY
 from utility.jwtoken.common import get_active_kid
 
-KEYS_DIR = Path("keys")
 EXPIRY_DAYS = JWT_REFRESH_TOKEN_EXPIRY.days + 1
 
 
@@ -22,7 +21,7 @@ def cleanup_old_keys():
             continue
         if kid_dir.name == active_kid:
             continue  # Don't delete active key
-        created_at_file = kid_dir / "created_at.txt"
+        created_at_file = kid_dir / CREATED_AT_FILE
         if not created_at_file.exists():
             continue  # Skip keys without metadata
 

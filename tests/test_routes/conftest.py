@@ -1,7 +1,7 @@
 import pytest
 from flask import Flask
 
-from jwt_helper import generate_access_token
+from jwtoken.tokens import generate_access_token
 
 
 @pytest.fixture

@@ -2,7 +2,8 @@
 logs/
 *.log
 
-# Ignore all pem files
+# Ignore JWT keys
+keys/
 *.pem
 
 # Upload folder

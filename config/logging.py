@@ -12,12 +12,12 @@ def setup_logging():
     logger.setLevel(logging.DEBUG)
 
     # Create a file handler that rotates logs daily
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d")
 
     # Create a directory for logs if it doesn't exist
     if not os.path.exists(LOGS_DIRECTORY):
         os.makedirs(LOGS_DIRECTORY)
-    log_filename = f"{LOGS_DIRECTORY}/{timestamp}.log"
+    log_filename = f"{LOGS_DIRECTORY}/{current_time}.log"
 
     # Set up timed rotating file handler
     file_handler = TimedRotatingFileHandler(

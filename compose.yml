@@ -1,0 +1,11 @@
+services:
+  redis:
+    image: redis:8.0-rc1-alpine3.21
+    ports:
+      - "6379:6379"
+
+  flask:
+    build: .
+    depends_on:
+      redis:
+        condition: service_healthy

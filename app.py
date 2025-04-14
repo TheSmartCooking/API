@@ -6,8 +6,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
+from config.cache import cache
 from config.jwtoken import ACTIVE_KID_FILE
-from config.logging import setup_logging
+from config.logging import logger
 from config.ratelimit import limiter
 from config.settings import Config
 from routes import register_routes
@@ -20,7 +21,6 @@ CORS(app)
 limiter.init_app(app)
 
 # Set up logging
-logger = setup_logging()
 app.logger.handlers.clear()
 for handler in logger.handlers:
     app.logger.addHandler(handler)
@@ -33,8 +33,12 @@ if app.config["TESTING"]:
 if not os.path.exists(ACTIVE_KID_FILE):
     rotate_keys()
 
+# Setup cache
+cache.init_app(app)
+
 
 @app.route("/")
+@cache.cached(timeout=3600)
 def home():
     return jsonify(message="Hello there!")
 

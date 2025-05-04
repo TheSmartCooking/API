@@ -3,15 +3,11 @@ from flask import Blueprint, current_app, jsonify, request
 from pymysql import MySQLError
 
 from config.ratelimit import limiter
-from jwt_helper import (
-    TokenError,
-    extract_token_from_header,
-    generate_access_token,
-    generate_refresh_token,
-    verify_token,
-)
+from jwtoken.exceptions import TokenError
+from jwtoken.tokens import generate_access_token, generate_refresh_token, verify_token
 from utility.database import database_cursor
 from utility.encryption import encrypt_email, hash_email, hash_password, verify_password
+from utility.jwtoken.common import extract_token_from_header
 from utility.validation import validate_email, validate_password
 
 authentication_blueprint = Blueprint("authentication", __name__)

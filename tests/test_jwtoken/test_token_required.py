@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 
-from jwt_helper import token_required
+from jwtoken.decorators import token_required
 
 app = Flask(__name__)
 

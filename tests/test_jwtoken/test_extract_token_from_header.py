@@ -1,7 +1,8 @@
 import pytest
 from flask import Flask
 
-from jwt_helper import TokenError, extract_token_from_header
+from jwtoken.exceptions import TokenError
+from utility.jwtoken.common import extract_token_from_header
 
 app = Flask(__name__)
 

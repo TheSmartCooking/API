@@ -2,7 +2,7 @@ FROM alpine:latest
 
 # Install common tools
 RUN apk add --no-cache bash git \
-    python3 py3-pip
+    python3 py3-pip openssl
 
 # Setup default user
 ARG USERNAME=vscode

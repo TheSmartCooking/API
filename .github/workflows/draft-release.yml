@@ -1,0 +1,90 @@
+name: Create a Draft Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      trigger_branch:
+        description: "Branch to monitor for changes"
+        default: "main"
+        required: false
+      file_filter_pattern:
+        description: "Regex to match changed files"
+        default: '^(?!tests/).*\.py$'
+        required: false
+
+env:
+  TRIGGER_BRANCH: ${{ github.event.inputs.trigger_branch || 'main' }}
+  FILE_FILTER_PATTERN: ${{ github.event.inputs.file_filter_pattern || '^(?!tests/).*\.py$' }}
+
+jobs:
+  create-release-draft:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code and fetch tags
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for modified matching files
+        id: check_changes
+        run: |
+          echo "Trigger branch: $TRIGGER_BRANCH"
+          echo "File filter pattern: $FILE_FILTER_PATTERN"
+
+          git fetch origin $TRIGGER_BRANCH --depth=2
+          MODIFIED=$(git diff --name-only HEAD^ HEAD)
+
+          echo "Modified files:"
+          echo "$MODIFIED"
+
+          MATCHING=$(echo "$MODIFIED" | grep -E "$FILE_FILTER_PATTERN" || true)
+
+          echo "Matching files:"
+          echo "$MATCHING"
+
+          if [[ -n "$MATCHING" ]]; then
+            echo "should_trigger=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_trigger=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine next tag version
+        id: version
+        run: |
+          LATEST=$(git tag --sort=-v:refname | head -n 1)
+          echo "Latest tag: $LATEST"
+
+          if [[ -z "$LATEST" ]]; then
+            NEXT_TAG="v0.0.1"
+          else
+            [[ "$LATEST" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)(-.+)?$ ]]
+            MAJOR=${BASH_REMATCH[1]}
+            MINOR=${BASH_REMATCH[2]}
+            PATCH=${BASH_REMATCH[3]}
+            SUFFIX=${BASH_REMATCH[4]}
+            PATCH=$((PATCH + 1))
+            NEXT_TAG="v$MAJOR.$MINOR.$PATCH$SUFFIX"
+          fi
+
+          echo "Next tag: $NEXT_TAG"
+          echo "tag=$NEXT_TAG" >> $GITHUB_OUTPUT
+
+      - name: Create draft release
+        if: steps.check_changes.outputs.should_trigger == 'true'
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d '{
+              "tag_name": "${{ steps.version.outputs.tag }}",
+              "target_commitish": "'"$TRIGGER_BRANCH"'",
+              "name": "${{ steps.version.outputs.tag }}",
+              "draft": true,
+              "prerelease": false,
+              "generate_release_notes": true
+            }'

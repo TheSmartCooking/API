@@ -17,9 +17,9 @@ RUN addgroup -g ${USER_GID} -S ${USERNAME} && \
 # Switch to the default user
 USER ${USERNAME}
 
-# Set evironment variables for pip user installs
-ENV PATH="/home/${USERNAME}/.local/bin:$PATH"
-ENV PIP_NO_CACHE_DIR=1
-ENV PYTHONUNBUFFERED=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-ENV PIP_BREAK_SYSTEM_PACKAGES=1
+# Set environment variables for pip
+ENV PATH="/home/${USERNAME}/.local/bin:$PATH" \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONUNBUFFERED=1

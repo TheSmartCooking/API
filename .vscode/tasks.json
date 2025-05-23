@@ -19,7 +19,7 @@
             "type": "shell",
             "command": "python3 -m pytest '${relativeFile}' -v -x",
             "group": {
-                "kind": "test",
+                "kind": "test"
             },
             "problemMatcher": [],
             "runOptions": {

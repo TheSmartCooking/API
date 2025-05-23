@@ -8,19 +8,10 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      trigger_branch:
-        description: "Branch to monitor for changes"
-        default: "main"
-        required: false
-      file_filter_pattern:
-        description: "Regex to match changed files"
-        default: '^(?!tests/).*\.py$'
-        required: false
 
 env:
-  TRIGGER_BRANCH: ${{ github.event.inputs.trigger_branch || 'main' }}
-  FILE_FILTER_PATTERN: ${{ github.event.inputs.file_filter_pattern || '^(?!tests/).*\.py$' }}
+  TRIGGER_BRANCH: main
+  FILE_FILTER_PATTERN: '^(?!tests/).*\.py$'
 
 jobs:
   create-release-draft:

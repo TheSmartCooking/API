@@ -11,6 +11,9 @@ on:
     - cron: '0 4 * * 1' # Every Monday at 4:00 UTC
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   pip-audit:
     runs-on: ubuntu-latest

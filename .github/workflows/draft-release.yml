@@ -1,5 +1,8 @@
 name: Create a Draft Release
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:

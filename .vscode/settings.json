@@ -30,7 +30,7 @@
         "Run all tests": [
             "!tests/**",
             "**/*.py"
-        ],
+        ]
     },
     "python.testing.pytestArgs": [
         "tests"

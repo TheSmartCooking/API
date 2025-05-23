@@ -38,7 +38,7 @@ jobs:
           echo "Trigger branch: $TRIGGER_BRANCH"
           echo "File filter pattern: $FILE_FILTER_PATTERN"
 
-          git fetch origin $TRIGGER_BRANCH --depth=2
+          git fetch origin "$TRIGGER_BRANCH" --depth=2
           MODIFIED=$(git diff --name-only HEAD^ HEAD)
 
           echo "Modified files:"
@@ -50,9 +50,9 @@ jobs:
           echo "$MATCHING"
 
           if [[ -n "$MATCHING" ]]; then
-            echo "should_trigger=true" >> $GITHUB_OUTPUT
+            echo "should_trigger=true" >> "$GITHUB_OUTPUT"
           else
-            echo "should_trigger=false" >> $GITHUB_OUTPUT
+            echo "should_trigger=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Determine next tag version
@@ -74,7 +74,7 @@ jobs:
           fi
 
           echo "Next tag: $NEXT_TAG"
-          echo "tag=$NEXT_TAG" >> $GITHUB_OUTPUT
+          echo "tag=$NEXT_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Create draft release
         if: steps.check_changes.outputs.should_trigger == 'true'

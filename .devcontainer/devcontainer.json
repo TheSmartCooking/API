@@ -7,13 +7,14 @@
         },
         "vscode": {
             "extensions": [
+                "gruntfuggly.triggertaskonsave",
                 "ms-python.black-formatter",
                 "ms-python.python",
-                "ms-python.isort",
-                "emeraldwalk.RunOnSave"
+                "ms-python.isort"
             ]
         }
     },
-    "postStartCommand": "pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt --break-system-packages && python3 -m pytest tests",
+    "postStartCommand": "pip3 install --user -r requirements.txt",
+    "postAttachCommand": "python3 -m pytest tests",
     "remoteUser": "vscode"
 }

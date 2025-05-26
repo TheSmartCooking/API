@@ -1,12 +1,13 @@
 name: Pytest CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
       - main
   pull_request:
-
-permissions: {}
 
 jobs:
   test:

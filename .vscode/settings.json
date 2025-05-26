@@ -23,13 +23,13 @@
         "--profile",
         "black"
     ],
-    "emeraldwalk.runonsave": {
-        "commands": [
-            {
-                "match": "tests[/\\\\](.*[/\\\\])?test_.*\\.py$",
-                "cmd": "python3 -m pytest '${relativeFile}' -v",
-                "autoShowOutputPanel": "error"
-            }
+    "triggerTaskOnSave.tasks": {
+        "Run on test file": [
+            "tests/**/test_*.py"
+        ],
+        "Run all tests": [
+            "!tests/**",
+            "**/*.py"
         ]
     },
     "python.testing.pytestArgs": [
